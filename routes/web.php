@@ -86,12 +86,15 @@ Route::middleware(['auth', 'active'])->group(function () {
         // Sales Orders Management
         Route::middleware('permission:sales-orders.view')->group(function () {
             Route::get('/sales-orders', [SalesOrderController::class, 'index'])->name('sales-orders.index');
-            Route::get('/sales-orders/{salesOrder}', [SalesOrderController::class, 'show'])->name('sales-orders.show');
         });
 
         Route::middleware('permission:sales-orders.create')->group(function () {
             Route::get('/sales-orders/create', [SalesOrderController::class, 'create'])->name('sales-orders.create');
             Route::post('/sales-orders', [SalesOrderController::class, 'store'])->name('sales-orders.store');
+        });
+
+        Route::middleware('permission:sales-orders.view')->group(function () {
+            Route::get('/sales-orders/{salesOrder}', [SalesOrderController::class, 'show'])->name('sales-orders.show');
         });
 
         Route::middleware('permission:sales-orders.edit')->group(function () {
