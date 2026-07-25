@@ -58,7 +58,7 @@ class SalesOrderController extends Controller
     {
         $validated = $request->validate([
             'so_number' => ['required', 'string', 'max:100', 'unique:sales_orders,so_number'],
-            'billed_via' => ['required', 'string', 'max:100'],
+            'billed_from' => ['required', 'string', 'max:100'],
             'billed_to' => ['required', 'string', 'max:255'],
             'billed_status' => ['required', 'string', Rule::in(['pending', 'billed', 'paid', 'cancelled'])],
             'bill_no' => ['nullable', 'string', 'max:100'],
@@ -89,7 +89,7 @@ class SalesOrderController extends Controller
 
             $order = SalesOrder::create([
                 'so_number' => $validated['so_number'],
-                'billed_via' => $validated['billed_via'],
+                'billed_from' => $validated['billed_from'],
                 'billed_to' => $validated['billed_to'],
                 'billed_status' => $validated['billed_status'],
                 'bill_no' => $validated['bill_no'] ?? null,
@@ -147,7 +147,7 @@ class SalesOrderController extends Controller
     {
         $validated = $request->validate([
             'so_number' => ['required', 'string', 'max:100', Rule::unique('sales_orders')->ignore($salesOrder->id)],
-            'billed_via' => ['required', 'string', 'max:100'],
+            'billed_from' => ['required', 'string', 'max:100'],
             'billed_to' => ['required', 'string', 'max:255'],
             'billed_status' => ['required', 'string', Rule::in(['pending', 'billed', 'paid', 'cancelled'])],
             'bill_no' => ['nullable', 'string', 'max:100'],
@@ -183,7 +183,7 @@ class SalesOrderController extends Controller
 
             $salesOrder->update([
                 'so_number' => $validated['so_number'],
-                'billed_via' => $validated['billed_via'],
+                'billed_from' => $validated['billed_from'],
                 'billed_to' => $validated['billed_to'],
                 'billed_status' => $validated['billed_status'],
                 'bill_no' => $validated['bill_no'] ?? null,

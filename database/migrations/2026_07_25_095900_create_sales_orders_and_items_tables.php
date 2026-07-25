@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sales_orders', function (Blueprint $table) {
             $table->id();
             $table->string('so_number')->unique();
-            $table->string('billed_via');
+            $table->string('billed_from');
             $table->string('billed_to');
             $table->string('billed_status')->default('pending')->index();
             $table->string('bill_no')->nullable()->index();

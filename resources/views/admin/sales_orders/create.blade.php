@@ -4,6 +4,10 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6" x-data="{
+    billedFromPreset: 'Cloud',
+    billedFromCustom: 'Cloud',
+    billedToPreset: 'PBS',
+    billedToCustom: 'PBS',
     items: [
         { product_name: '', quantity: 1, unit_price: 0, remarks: '' }
     ],
@@ -63,18 +67,37 @@
                             class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
 
-                    <!-- Billed Via -->
+                    <!-- Billed From Dropdown + Custom -->
                     <div>
-                        <label for="billed_via" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Billed Via</label>
-                        <input type="text" id="billed_via" name="billed_via" value="{{ old('billed_via', 'Bank Transfer') }}" required placeholder="e.g. Bank, Cash, Cheque, Online"
-                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Billed From</label>
+                        <select x-model="billedFromPreset" @change="if (billedFromPreset !== 'Other') billedFromCustom = billedFromPreset; else billedFromCustom = ''"
+                            class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2">
+                            <option value="Cloud">Cloud</option>
+                            <option value="Dragon">Dragon</option>
+                            <option value="Cosmic">Cosmic</option>
+                            <option value="Other">Other (Custom Write-in)</option>
+                        </select>
+                        <input type="text" name="billed_from" x-model="billedFromCustom" required placeholder="Enter entity name..."
+                            :readonly="billedFromPreset !== 'Other'"
+                            :class="billedFromPreset !== 'Other' ? 'bg-slate-100 dark:bg-slate-800/60 opacity-80 cursor-not-allowed' : 'bg-white dark:bg-slate-900'"
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
 
-                    <!-- Billed To -->
+                    <!-- Billed To Dropdown + Custom -->
                     <div>
-                        <label for="billed_to" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Billed To (Customer / Entity)</label>
-                        <input type="text" id="billed_to" name="billed_to" value="{{ old('billed_to') }}" required placeholder="e.g. Acme Corp Inc."
-                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Billed To</label>
+                        <select x-model="billedToPreset" @change="if (billedToPreset !== 'Other') billedToCustom = billedToPreset; else billedToCustom = ''"
+                            class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2">
+                            <option value="PBS">PBS</option>
+                            <option value="Prativa Plus Two">Prativa Plus Two</option>
+                            <option value="Prativa School">Prativa School</option>
+                            <option value="EGA">EGA</option>
+                            <option value="Other">Other (Custom Write-in)</option>
+                        </select>
+                        <input type="text" name="billed_to" x-model="billedToCustom" required placeholder="Enter customer name..."
+                            :readonly="billedToPreset !== 'Other'"
+                            :class="billedToPreset !== 'Other' ? 'bg-slate-100 dark:bg-slate-800/60 opacity-80 cursor-not-allowed' : 'bg-white dark:bg-slate-900'"
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
 
                     <!-- Billed Status -->

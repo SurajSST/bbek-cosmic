@@ -50,8 +50,8 @@ class SalesOrderTest extends TestCase
 
         $response = $this->actingAs($this->admin)->post('/admin/sales-orders', [
             'so_number' => 'SO-TEST-100',
-            'billed_via' => 'Bank Transfer',
-            'billed_to' => 'Acme Corporation',
+            'billed_from' => 'Cloud',
+            'billed_to' => 'PBS',
             'billed_status' => 'billed',
             'bill_no' => 'BILL-999',
             'bill_image' => $billFile,
@@ -77,7 +77,8 @@ class SalesOrderTest extends TestCase
 
         $this->assertDatabaseHas('sales_orders', [
             'so_number' => 'SO-TEST-100',
-            'billed_to' => 'Acme Corporation',
+            'billed_from' => 'Cloud',
+            'billed_to' => 'PBS',
             'bill_no' => 'BILL-999',
         ]);
 
@@ -93,15 +94,15 @@ class SalesOrderTest extends TestCase
         $order1 = SalesOrder::factory()->create([
             'so_number' => 'SO-UNIQUE-111',
             'bill_no' => 'INV-111',
-            'billed_via' => 'Cash',
-            'billed_to' => 'Customer A',
+            'billed_from' => 'Dragon',
+            'billed_to' => 'EGA',
         ]);
 
         $order2 = SalesOrder::factory()->create([
             'so_number' => 'SO-UNIQUE-222',
             'bill_no' => 'INV-222',
-            'billed_via' => 'Bank',
-            'billed_to' => 'Customer B',
+            'billed_from' => 'Cosmic',
+            'billed_to' => 'Prativa School',
         ]);
 
         // Search by SO Number
@@ -119,8 +120,8 @@ class SalesOrderTest extends TestCase
     {
         $order = SalesOrder::create([
             'so_number' => 'SO-RETURN-101',
-            'billed_via' => 'Cash',
-            'billed_to' => 'Returns Inc.',
+            'billed_from' => 'Cloud',
+            'billed_to' => 'Prativa Plus Two',
             'billed_status' => 'paid',
         ]);
 
@@ -151,8 +152,8 @@ class SalesOrderTest extends TestCase
     {
         $order = SalesOrder::create([
             'so_number' => 'SO-DEL-001',
-            'billed_via' => 'Cheque',
-            'billed_to' => 'Delete Me',
+            'billed_from' => 'Dragon',
+            'billed_to' => 'PBS',
             'billed_status' => 'pending',
         ]);
 

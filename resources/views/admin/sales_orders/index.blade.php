@@ -26,9 +26,9 @@
             <input type="hidden" name="sort" value="{{ request('sort', 'created_at') }}">
             <input type="hidden" name="dir" value="{{ request('dir', 'desc') }}">
 
-            <!-- Search Keyword (SO Number or Bill No) -->
+            <!-- Search Keyword (SO Number, Billed From/To, or Bill No) -->
             <div class="sm:col-span-2 relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by SO # or Bill No..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by SO #, Bill No, From, To..."
                     class="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
                 <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
@@ -78,13 +78,20 @@
 
                         <th class="py-3.5 px-4 font-semibold">Product / Items Summary</th>
                         
-                        <!-- Sortable Billed Via -->
-                        <th class="py-3.5 px-4 font-semibold">Billed Via</th>
+                        <!-- Sortable Billed From -->
+                        <th class="py-3.5 px-4 font-semibold">
+                            <a href="{{ route('admin.sales-orders.index', array_merge(request()->query(), ['sort' => 'billed_from', 'dir' => request('sort') === 'billed_from' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+                                Billed From
+                                @if(request('sort') === 'billed_from')
+                                    <span>{{ request('dir') === 'asc' ? '↑' : '↓' }}</span>
+                                @endif
+                            </a>
+                        </th>
 
                         <!-- Sortable Billed To -->
                         <th class="py-3.5 px-4 font-semibold">
                             <a href="{{ route('admin.sales-orders.index', array_merge(request()->query(), ['sort' => 'billed_to', 'dir' => request('sort') === 'billed_to' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                To (Customer)
+                                Billed To
                                 @if(request('sort') === 'billed_to')
                                     <span>{{ request('dir') === 'asc' ? '↑' : '↓' }}</span>
                                 @endif
@@ -150,12 +157,14 @@
                                 </div>
                             </td>
 
-                            <!-- Billed Via -->
-                            <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-medium">
-                                {{ $order->billed_via }}
+                            <!-- Billed From -->
+                            <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-semibold">
+                                <span class="px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 font-medium">
+                                    {{ $order->billed_from }}
+                                </span>
                             </td>
 
-                            <!-- To (Customer) -->
+                            <!-- Billed To -->
                             <td class="py-3.5 px-4 font-semibold text-slate-900 dark:text-slate-100">
                                 {{ $order->billed_to }}
                             </td>

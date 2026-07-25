@@ -48,20 +48,25 @@
                 Order Credentials
             </h3>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                <div>
+                    <span class="text-slate-400 font-medium block mb-1">Billed From</span>
+                    <span class="font-bold text-indigo-600 dark:text-indigo-400 text-sm">{{ $salesOrder->billed_from }}</span>
+                </div>
+
                 <div>
                     <span class="text-slate-400 font-medium block mb-1">Billed To</span>
                     <span class="font-bold text-slate-900 dark:text-white text-sm">{{ $salesOrder->billed_to }}</span>
                 </div>
 
                 <div>
-                    <span class="text-slate-400 font-medium block mb-1">Billed Via</span>
-                    <span class="font-semibold text-slate-800 dark:text-slate-200">{{ $salesOrder->billed_via }}</span>
+                    <span class="text-slate-400 font-medium block mb-1">Bill No.</span>
+                    <span class="font-mono font-semibold text-slate-800 dark:text-slate-200">{{ $salesOrder->bill_no ?: 'N/A' }}</span>
                 </div>
 
                 <div>
-                    <span class="text-slate-400 font-medium block mb-1">Bill No.</span>
-                    <span class="font-mono font-semibold text-slate-800 dark:text-slate-200">{{ $salesOrder->bill_no ?: 'N/A' }}</span>
+                    <span class="text-slate-400 font-medium block mb-1">Status</span>
+                    <span class="font-semibold uppercase text-slate-800 dark:text-slate-200">{{ $salesOrder->billed_status }}</span>
                 </div>
             </div>
 
