@@ -76,7 +76,15 @@ class LoginController extends Controller
             'last_login_at' => now(),
         ])->save();
 
-        return redirect()->intended(route('admin.dashboard'))
+        $targetRoute = $user->getHomeRoute();
+        
+        // If intended URL is dashboard but user cannot view dashboard, override to home route
+        $intendedUrl = session()->get('url.intended');
+        if ($intendedUrl === route('admin.dashboard') && !$user->can('dashboard.view')) {
+            session()->forget('url.intended');
+        }
+
+        return redirect()->intended($targetRoute)
             ->with('success', 'Welcome back, ' . $user->name . '!');
     }
 

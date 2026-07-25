@@ -108,4 +108,32 @@ class User extends Authenticatable
             $q->where('name', $role);
         });
     }
+
+    /**
+     * Get the default landing route based on user's active permissions.
+     */
+    public function getHomeRoute(): string
+    {
+        if ($this->can('dashboard.view')) {
+            return route('admin.dashboard');
+        }
+
+        if ($this->can('sales-orders.view')) {
+            return route('admin.sales-orders.index');
+        }
+
+        if ($this->can('users.view')) {
+            return route('admin.users.index');
+        }
+
+        if ($this->can('roles.view')) {
+            return route('admin.roles.index');
+        }
+
+        if ($this->can('permissions.view')) {
+            return route('admin.permissions.index');
+        }
+
+        return route('login');
+    }
 }

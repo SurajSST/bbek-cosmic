@@ -5,58 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sign In — {{ config('app.name', 'Cosmic Bill') }}</title>
 
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <script>
-        (function() {
-            const theme = localStorage.getItem('theme') || 'system';
-            if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        })();
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-heading { font-family: 'Outfit', sans-serif; }
     </style>
 </head>
-<body class="h-full bg-slate-900 text-slate-100 flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
-    <div class="w-full max-w-md">
+<body class="h-full bg-slate-950 text-slate-100 flex items-center justify-center p-4 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+    
+    <!-- Background Gradient Glows -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-violet-600/30 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-md relative z-10 space-y-6">
 
         <!-- Logo Header -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 text-white font-bold text-2xl shadow-xl shadow-indigo-500/25 mb-4">
+        <div class="text-center space-y-2">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 text-white font-extrabold text-2xl shadow-xl shadow-indigo-500/30 mb-2">
                 C
             </div>
-            <h1 class="text-2xl font-bold text-white tracking-tight">Cosmic Bill Engine</h1>
-            <p class="text-xs text-slate-400 mt-1">Enterprise SaaS Authentication & Administration</p>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight font-heading">Cosmic Bill</h1>
+            <p class="text-xs text-slate-400 font-medium">Enterprise SaaS Billing & Access Control Engine</p>
         </div>
 
         <!-- Login Card -->
-        <div class="bg-slate-800/90 backdrop-blur-xl border border-slate-700/60 rounded-2xl p-6 sm:p-8 shadow-2xl">
-            <h2 class="text-lg font-semibold text-white mb-6">Sign in to your account</h2>
+        <div class="bg-slate-900/80 backdrop-blur-2xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+            
+            <div class="border-b border-slate-800/80 pb-4">
+                <h2 class="text-lg font-bold text-white font-heading">Sign in to workspace</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Enter your operational credentials below</p>
+            </div>
 
             <!-- Session Info Message -->
             @if (session('info'))
-                <div class="mb-5 p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs flex items-center gap-2">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>{{ session('info') }}</span>
+                <div class="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs flex items-center gap-2.5">
+                    <svg class="w-4 h-4 shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="font-medium">{{ session('info') }}</span>
                 </div>
             @endif
 
-            <!-- Global Errors -->
+            <!-- Global Validation Errors -->
             @if ($errors->any())
-                <div class="mb-5 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs space-y-1">
+                <div class="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs space-y-1">
                     @foreach ($errors->all() as $error)
                         <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 shrink-0 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <span>{{ $error }}</span>
+                            <span class="text-rose-400 font-bold">✕</span>
+                            <span class="font-medium">{{ $error }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -66,42 +66,42 @@
                 @csrf
 
                 <!-- Email Input -->
-                <div>
-                    <label for="email" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Email Address</label>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
-                        class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                <div class="space-y-1.5">
+                    <label for="email" class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ old('email', 'admin@example.com') }}" required autofocus
+                        class="w-full px-4 py-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                         placeholder="admin@example.com">
                 </div>
 
                 <!-- Password Input -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label for="password" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Password</label>
-                    </div>
-                    <input type="password" id="password" name="password" required
-                        class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                <div class="space-y-1.5">
+                    <label for="password" class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider">Password</label>
+                    <input type="password" id="password" name="password" required value="password"
+                        class="w-full px-4 py-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                         placeholder="••••••••">
                 </div>
 
                 <!-- Remember Me -->
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2.5 cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-800">
-                        <span class="text-xs text-slate-300">Remember session</span>
+                        <input type="checkbox" name="remember" class="w-4 h-4 rounded-md border-slate-800 bg-slate-950 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900">
+                        <span class="text-xs text-slate-400 font-medium">Keep me signed in</span>
                     </label>
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold shadow-lg shadow-indigo-600/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800 transition transform active:scale-[0.99]">
-                    Sign In to Admin
+                <button type="submit" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition transform active:scale-[0.99] uppercase tracking-wider">
+                    Authenticate Account
                 </button>
             </form>
         </div>
 
         <!-- Footer -->
-        <p class="text-center text-xs text-slate-500 mt-6">
-            Protected by Spatie Role & Permission Engine
-        </p>
+        <div class="text-center space-y-1">
+            <p class="text-[11px] text-slate-400 font-medium">
+                Protected by Spatie Role & Permission Authorization Engine
+            </p>
+        </div>
     </div>
 </body>
 </html>

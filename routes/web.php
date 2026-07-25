@@ -9,9 +9,9 @@ use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// Redirect root to dashboard or login
+// Redirect root to accessible home route or login
 Route::get('/', function () {
-    return Auth::check() ? redirect()->route('admin.dashboard') : redirect()->route('login');
+    return Auth::check() ? redirect(Auth::user()->getHomeRoute()) : redirect()->route('login');
 });
 
 // Guest Routes
