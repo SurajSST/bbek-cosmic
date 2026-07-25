@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (request()->hasHeader('x-forwarded-proto') && request()->header('x-forwarded-proto') === 'https') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        } elseif (str_contains(request()->header('host', ''), 'ngrok')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }
