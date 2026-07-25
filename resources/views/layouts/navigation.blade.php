@@ -36,6 +36,19 @@
             </nav>
         </div>
 
+        <!-- Sales & Operations -->
+        @can('sales-orders.view')
+            <div>
+                <p class="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sales & Operations</p>
+                <nav class="space-y-1">
+                    <a href="{{ route('admin.sales-orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.sales-orders.*') ? 'bg-indigo-600/15 text-indigo-400 font-semibold border border-indigo-500/30' : 'hover:bg-slate-800/60 hover:text-slate-100' }}">
+                        <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        Sales Orders
+                    </a>
+                </nav>
+            </div>
+        @endcan
+
         <!-- Access Control -->
         @canany(['users.view', 'roles.view', 'permissions.view'])
             <div>
