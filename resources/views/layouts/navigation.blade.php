@@ -40,20 +40,42 @@
         @endcan
 
         <!-- Sales & Operations -->
-        @can('sales-orders.view')
+        @canany(['sales-orders.view', 'bills.view', 'upload-sos.view'])
             <div>
                 <p class="px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5">Sales & Operations</p>
                 <nav class="space-y-1">
-                    <a href="{{ route('admin.sales-orders.index') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.sales-orders.*') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
-                        @if(request()->routeIs('admin.sales-orders.*'))
-                            <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
-                        @endif
-                        <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                        Sales Orders
-                    </a>
+                    @can('sales-orders.view')
+                        <a href="{{ route('admin.sales-orders.index') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.sales-orders.*') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
+                            @if(request()->routeIs('admin.sales-orders.*'))
+                                <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
+                            @endif
+                            <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            Sales Orders
+                        </a>
+                    @endcan
+
+                    @can('bills.view')
+                        <a href="{{ route('admin.bills.index') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.bills.*') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
+                            @if(request()->routeIs('admin.bills.*'))
+                                <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
+                            @endif
+                            <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Upload Bill
+                        </a>
+                    @endcan
+
+                    @can('upload-sos.view')
+                        <a href="{{ route('admin.upload-sos.index') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.upload-sos.*') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
+                            @if(request()->routeIs('admin.upload-sos.*'))
+                                <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
+                            @endif
+                            <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Upload SO
+                        </a>
+                    @endcan
                 </nav>
             </div>
-        @endcan
+        @endcanany
 
         <!-- Access Control -->
         @canany(['users.view', 'roles.view', 'permissions.view'])

@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\BillController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SalesOrderController;
+use App\Http\Controllers\Admin\UploadSoController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Auth;
@@ -83,7 +85,7 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
         });
 
-        // Sales Orders Management
+        // Sales Orders Management (Original Sales Orders Module)
         Route::middleware('permission:sales-orders.view')->group(function () {
             Route::get('/sales-orders', [SalesOrderController::class, 'index'])->name('sales-orders.index');
         });
@@ -105,6 +107,52 @@ Route::middleware(['auth', 'active'])->group(function () {
 
         Route::middleware('permission:sales-orders.delete')->group(function () {
             Route::delete('/sales-orders/{salesOrder}', [SalesOrderController::class, 'destroy'])->name('sales-orders.destroy');
+        });
+
+        // Bills Management (Dedicated Permission Level: bills.*)
+        Route::middleware('permission:bills.view')->group(function () {
+            Route::get('/bills', [BillController::class, 'index'])->name('bills.index');
+        });
+
+        Route::middleware('permission:bills.create')->group(function () {
+            Route::get('/bills/create', [BillController::class, 'create'])->name('bills.create');
+            Route::post('/bills', [BillController::class, 'store'])->name('bills.store');
+        });
+
+        Route::middleware('permission:bills.view')->group(function () {
+            Route::get('/bills/{bill}', [BillController::class, 'show'])->name('bills.show');
+        });
+
+        Route::middleware('permission:bills.edit')->group(function () {
+            Route::get('/bills/{bill}/edit', [BillController::class, 'edit'])->name('bills.edit');
+            Route::put('/bills/{bill}', [BillController::class, 'update'])->name('bills.update');
+        });
+
+        Route::middleware('permission:bills.delete')->group(function () {
+            Route::delete('/bills/{bill}', [BillController::class, 'destroy'])->name('bills.destroy');
+        });
+
+        // Upload SO Management (Dedicated Permission Level: upload-sos.*)
+        Route::middleware('permission:upload-sos.view')->group(function () {
+            Route::get('/upload-sos', [UploadSoController::class, 'index'])->name('upload-sos.index');
+        });
+
+        Route::middleware('permission:upload-sos.create')->group(function () {
+            Route::get('/upload-sos/create', [UploadSoController::class, 'create'])->name('upload-sos.create');
+            Route::post('/upload-sos', [UploadSoController::class, 'store'])->name('upload-sos.store');
+        });
+
+        Route::middleware('permission:upload-sos.view')->group(function () {
+            Route::get('/upload-sos/{uploadSo}', [UploadSoController::class, 'show'])->name('upload-sos.show');
+        });
+
+        Route::middleware('permission:upload-sos.edit')->group(function () {
+            Route::get('/upload-sos/{uploadSo}/edit', [UploadSoController::class, 'edit'])->name('upload-sos.edit');
+            Route::put('/upload-sos/{uploadSo}', [UploadSoController::class, 'update'])->name('upload-sos.update');
+        });
+
+        Route::middleware('permission:upload-sos.delete')->group(function () {
+            Route::delete('/upload-sos/{uploadSo}', [UploadSoController::class, 'destroy'])->name('upload-sos.destroy');
         });
     });
 });

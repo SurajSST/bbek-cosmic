@@ -48,6 +48,18 @@ class RoleAndPermissionSeeder extends Seeder
                 'sales-orders.edit',
                 'sales-orders.delete',
             ],
+            'bills' => [
+                'bills.view',
+                'bills.create',
+                'bills.edit',
+                'bills.delete',
+            ],
+            'upload-sos' => [
+                'upload-sos.view',
+                'upload-sos.create',
+                'upload-sos.edit',
+                'upload-sos.delete',
+            ],
         ];
 
         // Create or fetch permissions
