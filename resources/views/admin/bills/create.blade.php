@@ -18,6 +18,8 @@
     showCameraModal: false,
     mediaStream: null,
     cameraError: null,
+    fitMode: 'contain',
+    isMirrored: false,
 
     // File change handler
     onFileSelect(event) {
@@ -96,6 +98,12 @@
         canvas.width = videoEl.videoWidth;
         canvas.height = videoEl.videoHeight;
         const ctx = canvas.getContext('2d');
+
+        if (this.isMirrored) {
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+        }
+
         ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
 
         canvas.toBlob((blob) => {
@@ -352,7 +360,7 @@
 
     <!-- Live Camera Webcam Modal -->
     <div x-show="showCameraModal" x-cloak class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div @click.away="closeCamera()" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-lg w-full p-6 shadow-2xl space-y-4 relative">
+        <div @click.away="closeCamera()" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full p-6 shadow-2xl space-y-4 relative">
             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                 <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
                     <span class="relative flex h-2.5 w-2.5">
@@ -370,12 +378,9 @@
                 </div>
             </template>
 
-            <div class="relative bg-slate-950 rounded-2xl overflow-hidden aspect-video flex items-center justify-center border border-slate-800">
-                <video x-ref="cameraVideo" autoplay playsinline class="w-full h-full object-cover"></video>
-                <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded-full bg-slate-950/70 text-[10px] text-slate-300 font-mono flex items-center gap-1.5 backdrop-blur-sm border border-slate-800">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Webcam Active
-                </div>
+            <!-- Video Container: Clean Unobstructed Camera Feed -->
+            <div class="bg-slate-950 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-800 shadow-inner">
+                <video x-ref="cameraVideo" autoplay playsinline class="w-full h-full max-h-[60vh] object-contain"></video>
             </div>
 
             <div class="flex items-center justify-between pt-2">

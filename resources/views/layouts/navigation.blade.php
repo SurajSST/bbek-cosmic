@@ -116,7 +116,7 @@
         @endcanany
 
         <!-- Future Modules Card -->
-        <div>
+        <!-- <div>
             <p class="px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5">Expansion Roadmap</p>
             <div class="px-3.5 py-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/90 text-xs text-slate-400 space-y-2">
                 <div class="flex items-center justify-between text-slate-300 font-medium">
@@ -131,7 +131,7 @@
                     <span class="px-2 py-0.5 rounded-md bg-slate-950 text-[10px] text-slate-400 border border-slate-800">Reports</span>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- User Footer Summary -->
