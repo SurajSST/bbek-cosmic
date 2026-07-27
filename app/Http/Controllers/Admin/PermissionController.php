@@ -57,14 +57,24 @@ class PermissionController extends Controller
         ksort($groupedPermissions);
         ksort($modulesList);
 
-        $suggestedModules = ['members', 'savings', 'loans', 'expenses', 'dividends', 'ledger', 'reports'];
+        // Dynamically extract all active modules for the new permission dropdown
+        $availableModules = Permission::all()
+            ->map(function ($p) {
+                $parts = explode('.', $p->name);
+                return count($parts) > 1 ? strtolower($parts[0]) : 'general';
+            })
+            ->merge(['dashboard', 'users', 'roles', 'permissions', 'sales-orders', 'bills', 'upload-sos'])
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
 
         return view('admin.permissions.index', compact(
             'groupedPermissions',
             'modulesList',
             'search',
             'activeModule',
-            'suggestedModules'
+            'availableModules'
         ));
     }
 

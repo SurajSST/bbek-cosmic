@@ -82,9 +82,9 @@
                                 'roles' => '🛡️',
                                 'permissions' => '🔑',
                                 'dashboard' => '📊',
-                                'members' => '👤',
-                                'savings' => '💰',
-                                'loans' => '🏦',
+                                'sales-orders' => '📦',
+                                'bills' => '📄',
+                                'upload-sos' => '🖼️',
                                 default => '⚙️'
                             };
                         @endphp

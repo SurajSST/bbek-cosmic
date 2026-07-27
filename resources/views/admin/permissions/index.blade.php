@@ -60,10 +60,9 @@
                     'roles' => '🛡️',
                     'permissions' => '🔑',
                     'dashboard' => '📊',
-                    'members' => '👤',
-                    'savings' => '💰',
-                    'loans' => '🏦',
-                    'expenses' => '💸',
+                    'sales-orders' => '📦',
+                    'bills' => '📄',
+                    'upload-sos' => '🖼️',
                     default => '⚡'
                 };
             @endphp
@@ -177,17 +176,9 @@
                     <template x-if="!isCustom">
                         <div class="flex gap-2">
                             <select name="module" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="users">Users</option>
-                                <option value="roles">Roles</option>
-                                <option value="permissions">Permissions</option>
-                                <option value="dashboard">Dashboard</option>
-                                <option value="members">Members (Future)</option>
-                                <option value="savings">Savings (Future)</option>
-                                <option value="loans">Loans (Future)</option>
-                                <option value="expenses">Expenses (Future)</option>
-                                <option value="dividends">Dividends (Future)</option>
-                                <option value="ledger">Ledger (Future)</option>
-                                <option value="reports">Reports (Future)</option>
+                                @foreach ($availableModules as $modKey)
+                                    <option value="{{ $modKey }}">{{ ucwords(str_replace('-', ' ', $modKey)) }} ({{ $modKey }})</option>
+                                @endforeach
                             </select>
                             <button type="button" @click="isCustom = true" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold shrink-0">Custom</button>
                         </div>
@@ -208,7 +199,7 @@
                 </div>
 
                 <div class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-[11px] text-indigo-700 dark:text-indigo-300">
-                    Resulting permission convention: <span class="font-mono font-bold">module.action</span> (e.g. <span class="font-mono">savings.create</span>). Automatically assigned to Super Admin.
+                    Resulting permission convention: <span class="font-mono font-bold">module.action</span> (e.g. <span class="font-mono">sales-orders.bulk-upload</span>). Automatically assigned to Super Admin.
                 </div>
 
                 <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">

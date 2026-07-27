@@ -125,23 +125,6 @@
             </div>
         @endcanany
 
-        <!-- Future Modules Card -->
-        <!-- <div>
-            <p class="px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5">Expansion Roadmap</p>
-            <div class="px-3.5 py-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/90 text-xs text-slate-400 space-y-2">
-                <div class="flex items-center justify-between text-slate-300 font-medium">
-                    <span>Future Modules</span>
-                    <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 font-bold">Planned</span>
-                </div>
-                <div class="flex flex-wrap gap-1">
-                    <span class="px-2 py-0.5 rounded-md bg-slate-950 text-[10px] text-slate-400 border border-slate-800">Members</span>
-                    <span class="px-2 py-0.5 rounded-md bg-slate-950 text-[10px] text-slate-400 border border-slate-800">Savings</span>
-                    <span class="px-2 py-0.5 rounded-md bg-slate-950 text-[10px] text-slate-400 border border-slate-800">Loans</span>
-                    <span class="px-2 py-0.5 rounded-md bg-slate-950 text-[10px] text-slate-400 border border-slate-800">Expenses</span>
-                    <span class="px-2 py-0.5 rounded-md bg-slate-950 text-[10px] text-slate-400 border border-slate-800">Reports</span>
-                </div>
-            </div>
-        </div> -->
     </div>
 
     <!-- User Footer Summary -->
