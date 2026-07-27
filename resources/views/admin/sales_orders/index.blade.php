@@ -12,12 +12,21 @@
             <p class="text-xs text-slate-500 dark:text-slate-400">Manage sales orders, billing details, attached receipts, and item-level returns.</p>
         </div>
 
-        @can('sales-orders.create')
-            <a href="{{ route('admin.sales-orders.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition shrink-0">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                Create Sales Order
-            </a>
-        @endcan
+        <div class="flex items-center gap-3 shrink-0">
+            @can('sales-orders.bulk-upload')
+                <a href="{{ route('admin.sales-orders.bulk-upload') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs font-semibold shadow-sm transition">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    Bulk Upload SO
+                </a>
+            @endcan
+
+            @can('sales-orders.create')
+                <a href="{{ route('admin.sales-orders.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Create Sales Order
+                </a>
+            @endcan
+        </div>
     </div>
 
     <!-- Search & Filter Bar -->

@@ -284,4 +284,307 @@ class SalesOrderController extends Controller
 
         return back()->with('success', "Return status updated for item '{$item->product_name}'.");
     }
+
+    /**
+     * Show the bulk upload form for Sales Orders.
+     */
+    public function bulkUploadForm(): View
+    {
+        return view('admin.sales_orders.bulk_upload');
+    }
+
+    /**
+     * Download a sample CSV file pre-formatted for Sales Orders bulk upload.
+     */
+    public function downloadSample()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="sales_orders_bulk_upload_sample.csv"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () {
+            $file = fopen('php://output', 'w');
+
+            // Add UTF-8 BOM for Excel compatibility
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Header row
+            fputcsv($file, [
+                'so_number',
+                'billed_from',
+                'billed_to',
+                'billed_status',
+                'bill_no',
+                'so_remarks',
+                'so_description',
+                'product_name',
+                'quantity',
+                'unit_price',
+                'item_remarks',
+            ]);
+
+            // Sample SO 1 (SO-2026-001 with 2 items)
+            fputcsv($file, [
+                'SO-2026-001',
+                'Cosmic Store HQ',
+                'Acme Enterprise',
+                'billed',
+                'INV-9001',
+                'Urgent shipment',
+                'Bulk office order',
+                'Wireless Ergonomic Mouse',
+                '5',
+                '45.00',
+                'Black Color',
+            ]);
+
+            fputcsv($file, [
+                'SO-2026-001',
+                'Cosmic Store HQ',
+                'Acme Enterprise',
+                'billed',
+                'INV-9001',
+                'Urgent shipment',
+                'Bulk office order',
+                'Mechanical Gaming Keyboard',
+                '2',
+                '120.00',
+                'RGB Backlit',
+            ]);
+
+            // Sample SO 2 (SO-2026-002 with 1 item)
+            fputcsv($file, [
+                'SO-2026-002',
+                'Cosmic Electronics',
+                'Global Solutions Ltd',
+                'pending',
+                '',
+                'Standard delivery',
+                '',
+                '4K USB-C Monitor 27"',
+                '1',
+                '350.00',
+                'IPS Panel',
+            ]);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Process the uploaded Excel/CSV sheet for Sales Orders & products.
+     */
+    public function processBulkUpload(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'max:10240'], // 10MB
+        ]);
+
+        $file = $request->file('file');
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if (!in_array($extension, ['csv', 'txt', 'xlsx', 'xls'])) {
+            return back()->withErrors(['file' => 'Invalid file format. Please upload a .csv file.']);
+        }
+
+        $path = $file->getRealPath();
+        $handle = fopen($path, 'r');
+        if (!$handle) {
+            return back()->withErrors(['file' => 'Unable to open uploaded file.']);
+        }
+
+        // Detect delimiter
+        $firstLine = fgets($handle);
+        rewind($handle);
+        $delimiter = ',';
+        if (strpos($firstLine, ';') !== false && strpos($firstLine, ',') === false) {
+            $delimiter = ';';
+        } elseif (strpos($firstLine, "\t") !== false && strpos($firstLine, ',') === false) {
+            $delimiter = "\t";
+        }
+
+        $headerRow = fgetcsv($handle, 0, $delimiter);
+        if (!$headerRow) {
+            fclose($handle);
+            return back()->withErrors(['file' => 'Uploaded file is empty or corrupted.']);
+        }
+
+        // Clean UTF-8 BOM
+        $headerRow[0] = preg_replace('/[\x00-\x1F\x7F\xEF\xBB\xBF]/', '', $headerRow[0]);
+
+        // Map headers
+        $headerMap = [];
+        foreach ($headerRow as $index => $colName) {
+            $normalized = strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', $colName))));
+            $headerMap[$index] = $normalized;
+        }
+
+        $rowNumber = 1;
+        $parsedData = [];
+
+        while (($data = fgetcsv($handle, 0, $delimiter)) !== false) {
+            $rowNumber++;
+
+            // Skip empty rows
+            if (empty(array_filter($data, fn($val) => trim((string)$val) !== ''))) {
+                continue;
+            }
+
+            $rowMap = [];
+            foreach ($data as $index => $val) {
+                $key = $headerMap[$index] ?? "col_$index";
+                $rowMap[$key] = trim((string)$val);
+            }
+            $rowMap['_row_num'] = $rowNumber;
+            $parsedData[] = $rowMap;
+        }
+        fclose($handle);
+
+        if (empty($parsedData)) {
+            return back()->withErrors(['file' => 'No data rows found in the uploaded file.']);
+        }
+
+        // Group rows by SO Number
+        $groupedSos = [];
+        $unnamedErrors = [];
+
+        foreach ($parsedData as $row) {
+            $soNumber = $row['so_number'] ?? $row['sonumber'] ?? $row['so_no'] ?? $row['so_num'] ?? '';
+
+            if (empty($soNumber)) {
+                $unnamedErrors[] = "Row {$row['_row_num']}: Missing 'so_number'.";
+                continue;
+            }
+
+            if (!isset($groupedSos[$soNumber])) {
+                $groupedSos[$soNumber] = [
+                    'header' => $row,
+                    'items' => [],
+                    'rows' => [],
+                ];
+            }
+            $groupedSos[$soNumber]['items'][] = $row;
+            $groupedSos[$soNumber]['rows'][] = $row['_row_num'];
+        }
+
+        $successSoCount = 0;
+        $totalItemsCreated = 0;
+        $errors = $unnamedErrors;
+
+        foreach ($groupedSos as $soNumber => $group) {
+            $rowListStr = implode(', ', $group['rows']);
+
+            // Duplicate SO check
+            if (SalesOrder::where('so_number', $soNumber)->exists()) {
+                $errors[] = "SO '{$soNumber}' (Rows {$rowListStr}): Sales order number already exists in database.";
+                continue;
+            }
+
+            $headerRow = $group['header'];
+            $billedFrom = $headerRow['billed_from'] ?? $headerRow['from'] ?? '';
+            $billedTo = $headerRow['billed_to'] ?? $headerRow['to'] ?? '';
+            $billedStatus = strtolower($headerRow['billed_status'] ?? $headerRow['status'] ?? 'pending');
+
+            if (!in_array($billedStatus, ['pending', 'billed', 'paid', 'cancelled'])) {
+                $billedStatus = 'pending';
+            }
+
+            $billNo = $headerRow['bill_no'] ?? $headerRow['bill_number'] ?? $headerRow['invoice_no'] ?? null;
+            $remarks = $headerRow['so_remarks'] ?? $headerRow['remarks'] ?? null;
+            $description = $headerRow['so_description'] ?? $headerRow['description'] ?? null;
+
+            // Header Validation
+            $soErrors = [];
+            if (empty($billedFrom)) {
+                $soErrors[] = "Missing 'billed_from'";
+            }
+            if (empty($billedTo)) {
+                $soErrors[] = "Missing 'billed_to'";
+            }
+
+            // Items Validation
+            $validItems = [];
+            foreach ($group['items'] as $itemRow) {
+                $rNum = $itemRow['_row_num'];
+                $productName = $itemRow['product_name'] ?? $itemRow['product'] ?? $itemRow['item_name'] ?? $itemRow['item'] ?? '';
+                $qtyRaw = trim((string)($itemRow['quantity'] ?? $itemRow['qty'] ?? ''));
+                $priceRaw = trim((string)($itemRow['unit_price'] ?? $itemRow['price'] ?? $itemRow['rate'] ?? ''));
+                $itemRemarks = $itemRow['item_remarks'] ?? $itemRow['product_remarks'] ?? null;
+
+                if (empty($productName)) {
+                    $soErrors[] = "Row {$rNum}: Missing 'product_name'";
+                }
+
+                $quantity = 1;
+                if ($qtyRaw !== '') {
+                    if (!is_numeric($qtyRaw) || (int)$qtyRaw < 1) {
+                        $soErrors[] = "Row {$rNum}: Quantity must be a valid number (at least 1)";
+                    } else {
+                        $quantity = (int)$qtyRaw;
+                    }
+                }
+
+                $unitPrice = 0.0;
+                if ($priceRaw !== '') {
+                    if (!is_numeric($priceRaw) || (float)$priceRaw < 0) {
+                        $soErrors[] = "Row {$rNum}: Unit price must be a valid non-negative number";
+                    } else {
+                        $unitPrice = (float)$priceRaw;
+                    }
+                }
+
+                $validItems[] = [
+                    'product_name' => $productName,
+                    'quantity' => $quantity,
+                    'unit_price' => $unitPrice,
+                    'total_price' => $quantity * $unitPrice,
+                    'return_status' => 'not_returned',
+                    'returned_quantity' => 0,
+                    'remarks' => $itemRemarks,
+                ];
+            }
+
+            if (!empty($soErrors)) {
+                $errors[] = "SO '{$soNumber}' (Rows {$rowListStr}) skipped due to errors: " . implode(', ', $soErrors);
+                continue;
+            }
+
+            // Perform DB Transaction for SO and Items
+            DB::transaction(function () use ($soNumber, $billedFrom, $billedTo, $billedStatus, $billNo, $remarks, $description, $validItems, &$totalItemsCreated) {
+                $so = SalesOrder::create([
+                    'so_number' => $soNumber,
+                    'billed_from' => $billedFrom,
+                    'billed_to' => $billedTo,
+                    'billed_status' => $billedStatus,
+                    'bill_no' => $billNo,
+                    'remarks' => $remarks,
+                    'description' => $description,
+                    'created_by' => Auth::id(),
+                ]);
+
+                foreach ($validItems as $itemData) {
+                    $so->items()->create($itemData);
+                    $totalItemsCreated++;
+                }
+            });
+
+            $successSoCount++;
+        }
+
+        $message = "Bulk upload process completed. {$successSoCount} Sales Order(s) created with {$totalItemsCreated} total product item(s).";
+
+        if (!empty($errors)) {
+            return redirect()->route('admin.sales-orders.bulk-upload')
+                ->with('success', $message)
+                ->with('bulk_errors', $errors);
+        }
+
+        return redirect()->route('admin.sales-orders.index')->with('success', $message);
+    }
 }

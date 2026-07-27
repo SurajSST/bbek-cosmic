@@ -95,6 +95,13 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::post('/sales-orders', [SalesOrderController::class, 'store'])->name('sales-orders.store');
         });
 
+        // Sales Orders Bulk Upload (Dedicated Permission Level: sales-orders.bulk-upload)
+        Route::middleware('permission:sales-orders.bulk-upload')->group(function () {
+            Route::get('/sales-orders/bulk-upload', [SalesOrderController::class, 'bulkUploadForm'])->name('sales-orders.bulk-upload');
+            Route::post('/sales-orders/bulk-upload', [SalesOrderController::class, 'processBulkUpload'])->name('sales-orders.bulk-upload.store');
+            Route::get('/sales-orders/bulk-upload/sample', [SalesOrderController::class, 'downloadSample'])->name('sales-orders.bulk-upload.sample');
+        });
+
         Route::middleware('permission:sales-orders.view')->group(function () {
             Route::get('/sales-orders/{salesOrder}', [SalesOrderController::class, 'show'])->name('sales-orders.show');
         });

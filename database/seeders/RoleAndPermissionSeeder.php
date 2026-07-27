@@ -47,6 +47,7 @@ class RoleAndPermissionSeeder extends Seeder
                 'sales-orders.create',
                 'sales-orders.edit',
                 'sales-orders.delete',
+                'sales-orders.bulk-upload',
             ],
             'bills' => [
                 'bills.view',

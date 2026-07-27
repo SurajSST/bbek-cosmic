@@ -40,17 +40,27 @@
         @endcan
 
         <!-- Sales & Operations -->
-        @canany(['sales-orders.view', 'bills.view', 'upload-sos.view'])
+        @canany(['sales-orders.view', 'sales-orders.bulk-upload', 'bills.view', 'upload-sos.view'])
             <div>
                 <p class="px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5">Sales & Operations</p>
                 <nav class="space-y-1">
                     @can('sales-orders.view')
-                        <a href="{{ route('admin.sales-orders.index') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.sales-orders.*') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
-                            @if(request()->routeIs('admin.sales-orders.*'))
+                        <a href="{{ route('admin.sales-orders.index') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ (request()->routeIs('admin.sales-orders.*') && !request()->routeIs('admin.sales-orders.bulk-upload*')) ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
+                            @if(request()->routeIs('admin.sales-orders.*') && !request()->routeIs('admin.sales-orders.bulk-upload*'))
                                 <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
                             @endif
                             <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                             Sales Orders
+                        </a>
+                    @endcan
+
+                    @can('sales-orders.bulk-upload')
+                        <a href="{{ route('admin.sales-orders.bulk-upload') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.sales-orders.bulk-upload*') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
+                            @if(request()->routeIs('admin.sales-orders.bulk-upload*'))
+                                <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
+                            @endif
+                            <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            Bulk Upload SO
                         </a>
                     @endcan
 
