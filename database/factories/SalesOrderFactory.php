@@ -23,6 +23,7 @@ class SalesOrderFactory extends Factory
     {
         return [
             'so_number' => 'SO-' . strtoupper(Str::random(6)),
+            'so_from' => $this->faker->randomElement(['Cloud', 'Dragon', 'Cosmic']),
             'billed_from' => $this->faker->randomElement(['Cloud', 'Dragon', 'Cosmic']),
             'billed_to' => $this->faker->randomElement(['PBS', 'Prativa Plus Two', 'Prativa School', 'EGA']),
             'billed_status' => $this->faker->randomElement(['pending', 'billed', 'paid', 'cancelled']),

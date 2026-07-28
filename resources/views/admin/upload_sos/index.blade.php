@@ -76,6 +76,15 @@
                         </th>
 
                         <th class="py-3.5 px-4 font-semibold">
+                            <a href="{{ route('admin.upload-sos.index', array_merge(request()->query(), ['sort' => 'so_from', 'dir' => request('sort') === 'so_from' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+                                SO From
+                                @if(request('sort') === 'so_from')
+                                    <span>{{ request('dir') === 'asc' ? '↑' : '↓' }}</span>
+                                @endif
+                            </a>
+                        </th>
+
+                        <th class="py-3.5 px-4 font-semibold">
                             <a href="{{ route('admin.upload-sos.index', array_merge(request()->query(), ['sort' => 'billed_from', 'dir' => request('sort') === 'billed_from' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
                                 From
                                 @if(request('sort') === 'billed_from')
@@ -129,6 +138,12 @@
                                     {{ $item->so_number }}
                                 </a>
                                 <span class="text-[10px] text-slate-400">{{ $item->created_at->format('M d, Y') }}</span>
+                            </td>
+
+                            <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-semibold">
+                                <span class="px-2 py-0.5 rounded-lg bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800/60 font-medium">
+                                    {{ $item->so_from ?: '—' }}
+                                </span>
                             </td>
 
                             <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-semibold">

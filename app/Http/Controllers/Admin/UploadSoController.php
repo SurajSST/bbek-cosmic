@@ -57,6 +57,7 @@ class UploadSoController extends Controller
     {
         $validated = $request->validate([
             'so_number' => ['required', 'string', 'max:100', 'unique:upload_sos,so_number'],
+            'so_from' => ['required', 'string', 'max:100'],
             'billed_from' => ['required', 'string', 'max:100'],
             'billed_to' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::in(['pending', 'billed', 'paid', 'cancelled'])],
@@ -77,6 +78,7 @@ class UploadSoController extends Controller
 
             UploadSo::create([
                 'so_number' => $validated['so_number'],
+                'so_from' => $validated['so_from'],
                 'billed_from' => $validated['billed_from'],
                 'billed_to' => $validated['billed_to'],
                 'status' => $validated['status'],
@@ -118,6 +120,7 @@ class UploadSoController extends Controller
     {
         $validated = $request->validate([
             'so_number' => ['required', 'string', 'max:100', Rule::unique('upload_sos')->ignore($uploadSo->id)],
+            'so_from' => ['required', 'string', 'max:100'],
             'billed_from' => ['required', 'string', 'max:100'],
             'billed_to' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::in(['pending', 'billed', 'paid', 'cancelled'])],
@@ -145,6 +148,7 @@ class UploadSoController extends Controller
 
             $uploadSo->update([
                 'so_number' => $validated['so_number'],
+                'so_from' => $validated['so_from'],
                 'billed_from' => $validated['billed_from'],
                 'billed_to' => $validated['billed_to'],
                 'status' => $validated['status'],

@@ -50,6 +50,7 @@ class SalesOrderTest extends TestCase
 
         $response = $this->actingAs($this->admin)->post('/admin/sales-orders', [
             'so_number' => 'SO-TEST-100',
+            'so_from' => 'Cloud',
             'billed_from' => 'Cloud',
             'billed_to' => 'PBS',
             'billed_status' => 'billed',
@@ -77,6 +78,7 @@ class SalesOrderTest extends TestCase
 
         $this->assertDatabaseHas('sales_orders', [
             'so_number' => 'SO-TEST-100',
+            'so_from' => 'Cloud',
             'billed_from' => 'Cloud',
             'billed_to' => 'PBS',
             'bill_no' => 'BILL-999',
@@ -89,10 +91,33 @@ class SalesOrderTest extends TestCase
         ]);
     }
 
+    public function test_bulk_upload_requires_only_so_number_so_from_and_product(): void
+    {
+        $csvContent = "so_number,so_from,product_name\nSO-BULK-99,Dragon,Graphics Card RX 7900";
+        $csvFile = UploadedFile::fake()->createWithContent('bulk_orders.csv', $csvContent);
+
+        $response = $this->actingAs($this->admin)->post('/admin/sales-orders/bulk-upload', [
+            'file' => $csvFile,
+        ]);
+
+        $response->assertRedirect(route('admin.sales-orders.index'));
+
+        $this->assertDatabaseHas('sales_orders', [
+            'so_number' => 'SO-BULK-99',
+            'so_from' => 'Dragon',
+        ]);
+
+        $this->assertDatabaseHas('sales_order_items', [
+            'product_name' => 'Graphics Card RX 7900',
+            'quantity' => 1,
+        ]);
+    }
+
     public function test_search_by_so_number_and_bill_no(): void
     {
         $order1 = SalesOrder::factory()->create([
             'so_number' => 'SO-UNIQUE-111',
+            'so_from' => 'Dragon',
             'bill_no' => 'INV-111',
             'billed_from' => 'Dragon',
             'billed_to' => 'EGA',
@@ -100,6 +125,7 @@ class SalesOrderTest extends TestCase
 
         $order2 = SalesOrder::factory()->create([
             'so_number' => 'SO-UNIQUE-222',
+            'so_from' => 'Cosmic',
             'bill_no' => 'INV-222',
             'billed_from' => 'Cosmic',
             'billed_to' => 'Prativa School',
@@ -120,6 +146,7 @@ class SalesOrderTest extends TestCase
     {
         $order = SalesOrder::create([
             'so_number' => 'SO-RETURN-101',
+            'so_from' => 'Cloud',
             'billed_from' => 'Cloud',
             'billed_to' => 'Prativa Plus Two',
             'billed_status' => 'paid',
@@ -152,6 +179,7 @@ class SalesOrderTest extends TestCase
     {
         $order = SalesOrder::create([
             'so_number' => 'SO-DEL-001',
+            'so_from' => 'Dragon',
             'billed_from' => 'Dragon',
             'billed_to' => 'PBS',
             'billed_status' => 'pending',

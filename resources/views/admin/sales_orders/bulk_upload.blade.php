@@ -183,16 +183,22 @@
                         <td class="px-4 py-2.5 font-sans">Unique Sales Order number (e.g. <code class="font-mono">SO-2026-001</code>). Group rows by matching SO number.</td>
                     </tr>
                     <tr>
-                        <td class="px-4 py-2.5 font-bold text-indigo-600 dark:text-indigo-400">billed_from</td>
+                        <td class="px-4 py-2.5 font-bold text-indigo-600 dark:text-indigo-400">so_from</td>
                         <td class="px-4 py-2.5 text-rose-500 font-sans font-bold">Yes</td>
                         <td class="px-4 py-2.5 text-slate-500 font-sans">String</td>
-                        <td class="px-4 py-2.5 font-sans">Entity/Store issuing the bill (e.g. <code class="font-mono">Cosmic Store HQ</code>).</td>
+                        <td class="px-4 py-2.5 font-sans">Sales order source (e.g. <code class="font-mono">Cloud</code>, <code class="font-mono">Dragon</code>, <code class="font-mono">Cosmic</code>).</td>
                     </tr>
                     <tr class="bg-slate-50/30 dark:bg-slate-900/30">
-                        <td class="px-4 py-2.5 font-bold text-indigo-600 dark:text-indigo-400">billed_to</td>
-                        <td class="px-4 py-2.5 text-rose-500 font-sans font-bold">Yes</td>
+                        <td class="px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">billed_from</td>
+                        <td class="px-4 py-2.5 text-slate-400 font-sans">Optional</td>
                         <td class="px-4 py-2.5 text-slate-500 font-sans">String</td>
-                        <td class="px-4 py-2.5 font-sans">Customer / Client receiving the bill (e.g. <code class="font-mono">Acme Enterprise</code>).</td>
+                        <td class="px-4 py-2.5 font-sans">Entity/Store issuing the bill (defaults to <code class="font-mono">so_from</code> if omitted).</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">billed_to</td>
+                        <td class="px-4 py-2.5 text-slate-400 font-sans">Optional</td>
+                        <td class="px-4 py-2.5 text-slate-500 font-sans">String</td>
+                        <td class="px-4 py-2.5 font-sans">Customer / Client receiving the bill.</td>
                     </tr>
                     <tr>
                         <td class="px-4 py-2.5 font-bold text-slate-700 dark:text-slate-300">billed_status</td>

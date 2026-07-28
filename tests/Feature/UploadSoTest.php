@@ -49,6 +49,7 @@ class UploadSoTest extends TestCase
 
         $response = $this->actingAs($this->admin)->post('/admin/upload-sos', [
             'so_number' => 'SO-UP-8800',
+            'so_from' => 'Dragon',
             'billed_from' => 'Dragon',
             'billed_to' => 'PBS',
             'status' => 'billed',
@@ -62,6 +63,7 @@ class UploadSoTest extends TestCase
 
         $this->assertDatabaseHas('upload_sos', [
             'so_number' => 'SO-UP-8800',
+            'so_from' => 'Dragon',
             'billed_from' => 'Dragon',
             'billed_to' => 'PBS',
             'status' => 'billed',
@@ -73,6 +75,7 @@ class UploadSoTest extends TestCase
     {
         UploadSo::create([
             'so_number' => 'SO-SEARCH-1',
+            'so_from' => 'Cloud',
             'billed_from' => 'Cloud',
             'billed_to' => 'EGA',
             'status' => 'billed',
@@ -80,6 +83,7 @@ class UploadSoTest extends TestCase
 
         UploadSo::create([
             'so_number' => 'SO-SEARCH-2',
+            'so_from' => 'Cosmic',
             'billed_from' => 'Cosmic',
             'billed_to' => 'Prativa School',
             'status' => 'paid',
@@ -94,6 +98,7 @@ class UploadSoTest extends TestCase
     {
         $so = UploadSo::create([
             'so_number' => 'SO-EDIT-1',
+            'so_from' => 'Cloud',
             'billed_from' => 'Cloud',
             'billed_to' => 'PBS',
             'status' => 'pending',
@@ -102,6 +107,7 @@ class UploadSoTest extends TestCase
 
         $response = $this->actingAs($this->admin)->put("/admin/upload-sos/{$so->id}", [
             'so_number' => 'SO-EDIT-1-UPDATED',
+            'so_from' => 'Cloud',
             'billed_from' => 'Cloud',
             'billed_to' => 'PBS',
             'status' => 'paid',
@@ -113,6 +119,7 @@ class UploadSoTest extends TestCase
         $this->assertDatabaseHas('upload_sos', [
             'id' => $so->id,
             'so_number' => 'SO-EDIT-1-UPDATED',
+            'so_from' => 'Cloud',
             'status' => 'paid',
             'amount' => 350.00,
         ]);
@@ -122,6 +129,7 @@ class UploadSoTest extends TestCase
     {
         $so = UploadSo::create([
             'so_number' => 'SO-DEL-1',
+            'so_from' => 'Dragon',
             'billed_from' => 'Dragon',
             'billed_to' => 'EGA',
             'status' => 'pending',

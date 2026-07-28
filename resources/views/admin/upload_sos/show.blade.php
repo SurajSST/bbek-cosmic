@@ -42,14 +42,18 @@
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm space-y-6">
         
         <!-- Metadata Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+            <div>
+                <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">SO From</span>
+                <span class="text-sm font-semibold text-violet-600 dark:text-violet-400">{{ $uploadSo->so_from ?: 'N/A' }}</span>
+            </div>
             <div>
                 <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Billed From</span>
-                <span class="text-sm font-semibold text-indigo-600 dark:text-indigo-400">{{ $uploadSo->billed_from }}</span>
+                <span class="text-sm font-semibold text-indigo-600 dark:text-indigo-400">{{ $uploadSo->billed_from ?: 'N/A' }}</span>
             </div>
             <div>
                 <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Billed To</span>
-                <span class="text-sm font-semibold text-slate-900 dark:text-white">{{ $uploadSo->billed_to }}</span>
+                <span class="text-sm font-semibold text-slate-900 dark:text-white">{{ $uploadSo->billed_to ?: 'N/A' }}</span>
             </div>
             <div>
                 <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Order Amount</span>

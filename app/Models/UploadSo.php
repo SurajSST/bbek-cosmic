@@ -14,6 +14,7 @@ class UploadSo extends Model
 
     protected $fillable = [
         'so_number',
+        'so_from',
         'billed_from',
         'billed_to',
         'status',
@@ -50,7 +51,7 @@ class UploadSo extends Model
     }
 
     /**
-     * Scope to search by SO Number, Billed From, or Billed To.
+     * Scope to search by SO Number, SO From, Billed From, or Billed To.
      */
     public function scopeSearch(Builder $query, ?string $search): Builder
     {
@@ -60,6 +61,7 @@ class UploadSo extends Model
 
         return $query->where(function (Builder $q) use ($search) {
             $q->where('so_number', 'like', "%{$search}%")
+              ->orWhere('so_from', 'like', "%{$search}%")
               ->orWhere('billed_from', 'like', "%{$search}%")
               ->orWhere('billed_to', 'like', "%{$search}%");
         });
@@ -70,7 +72,7 @@ class UploadSo extends Model
      */
     public function scopeSort(Builder $query, ?string $column = 'created_at', ?string $direction = 'desc'): Builder
     {
-        $allowedColumns = ['so_number', 'billed_from', 'billed_to', 'status', 'amount', 'created_at'];
+        $allowedColumns = ['so_number', 'so_from', 'billed_from', 'billed_to', 'status', 'amount', 'created_at'];
         $column = in_array($column, $allowedColumns) ? $column : 'created_at';
         $direction = strtolower($direction) === 'asc' ? 'asc' : 'desc';
 

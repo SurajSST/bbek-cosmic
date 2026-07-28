@@ -58,6 +58,7 @@ class SalesOrderController extends Controller
     {
         $validated = $request->validate([
             'so_number' => ['required', 'string', 'max:100', 'unique:sales_orders,so_number'],
+            'so_from' => ['required', 'string', 'max:100'],
             'billed_from' => ['required', 'string', 'max:100'],
             'billed_to' => ['required', 'string', 'max:255'],
             'billed_status' => ['required', 'string', Rule::in(['pending', 'billed', 'paid', 'cancelled'])],
@@ -89,6 +90,7 @@ class SalesOrderController extends Controller
 
             $order = SalesOrder::create([
                 'so_number' => $validated['so_number'],
+                'so_from' => $validated['so_from'],
                 'billed_from' => $validated['billed_from'],
                 'billed_to' => $validated['billed_to'],
                 'billed_status' => $validated['billed_status'],
@@ -147,6 +149,7 @@ class SalesOrderController extends Controller
     {
         $validated = $request->validate([
             'so_number' => ['required', 'string', 'max:100', Rule::unique('sales_orders')->ignore($salesOrder->id)],
+            'so_from' => ['required', 'string', 'max:100'],
             'billed_from' => ['required', 'string', 'max:100'],
             'billed_to' => ['required', 'string', 'max:255'],
             'billed_status' => ['required', 'string', Rule::in(['pending', 'billed', 'paid', 'cancelled'])],
@@ -183,6 +186,7 @@ class SalesOrderController extends Controller
 
             $salesOrder->update([
                 'so_number' => $validated['so_number'],
+                'so_from' => $validated['so_from'],
                 'billed_from' => $validated['billed_from'],
                 'billed_to' => $validated['billed_to'],
                 'billed_status' => $validated['billed_status'],
@@ -315,6 +319,7 @@ class SalesOrderController extends Controller
             // Header row
             fputcsv($file, [
                 'so_number',
+                'so_from',
                 'billed_from',
                 'billed_to',
                 'billed_status',
@@ -330,6 +335,7 @@ class SalesOrderController extends Controller
             // Sample SO 1 (SO-2026-001 with 2 items)
             fputcsv($file, [
                 'SO-2026-001',
+                'Cloud',
                 'Cosmic Store HQ',
                 'Acme Enterprise',
                 'billed',
@@ -344,6 +350,7 @@ class SalesOrderController extends Controller
 
             fputcsv($file, [
                 'SO-2026-001',
+                'Cloud',
                 'Cosmic Store HQ',
                 'Acme Enterprise',
                 'billed',
@@ -359,6 +366,7 @@ class SalesOrderController extends Controller
             // Sample SO 2 (SO-2026-002 with 1 item)
             fputcsv($file, [
                 'SO-2026-002',
+                'Dragon',
                 'Cosmic Electronics',
                 'Global Solutions Ltd',
                 'pending',
@@ -487,7 +495,8 @@ class SalesOrderController extends Controller
             }
 
             $headerRow = $group['header'];
-            $billedFrom = $headerRow['billed_from'] ?? $headerRow['from'] ?? '';
+            $soFrom = $headerRow['so_from'] ?? $headerRow['sofrom'] ?? $headerRow['from_so'] ?? $headerRow['so_from_name'] ?? '';
+            $billedFrom = $headerRow['billed_from'] ?? $headerRow['from'] ?? $soFrom;
             $billedTo = $headerRow['billed_to'] ?? $headerRow['to'] ?? '';
             $billedStatus = strtolower($headerRow['billed_status'] ?? $headerRow['status'] ?? 'pending');
 
@@ -499,13 +508,10 @@ class SalesOrderController extends Controller
             $remarks = $headerRow['so_remarks'] ?? $headerRow['remarks'] ?? null;
             $description = $headerRow['so_description'] ?? $headerRow['description'] ?? null;
 
-            // Header Validation
+            // Header Validation - Only so_number and so_from required
             $soErrors = [];
-            if (empty($billedFrom)) {
-                $soErrors[] = "Missing 'billed_from'";
-            }
-            if (empty($billedTo)) {
-                $soErrors[] = "Missing 'billed_to'";
+            if (empty($soFrom)) {
+                $soErrors[] = "Missing 'so_from'";
             }
 
             // Items Validation
@@ -556,9 +562,10 @@ class SalesOrderController extends Controller
             }
 
             // Perform DB Transaction for SO and Items
-            DB::transaction(function () use ($soNumber, $billedFrom, $billedTo, $billedStatus, $billNo, $remarks, $description, $validItems, &$totalItemsCreated) {
+            DB::transaction(function () use ($soNumber, $soFrom, $billedFrom, $billedTo, $billedStatus, $billNo, $remarks, $description, $validItems, &$totalItemsCreated) {
                 $so = SalesOrder::create([
                     'so_number' => $soNumber,
+                    'so_from' => $soFrom,
                     'billed_from' => $billedFrom,
                     'billed_to' => $billedTo,
                     'billed_status' => $billedStatus,
