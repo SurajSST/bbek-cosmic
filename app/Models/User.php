@@ -122,6 +122,14 @@ class User extends Authenticatable
             return route('admin.sales-orders.index');
         }
 
+        if ($this->can('bills.view')) {
+            return route('admin.bills.index');
+        }
+
+        if ($this->can('upload-sos.view')) {
+            return route('admin.upload-sos.index');
+        }
+
         if ($this->can('users.view')) {
             return route('admin.users.index');
         }
@@ -134,6 +142,6 @@ class User extends Authenticatable
             return route('admin.permissions.index');
         }
 
-        return route('login');
+        return route('admin.dashboard');
     }
 }

@@ -84,6 +84,51 @@ class AuthTest extends TestCase
         $response->assertSessionHasErrors('email');
     }
 
+    public function test_login_screen_does_not_contain_default_credentials(): void
+    {
+        $response = $this->get('/login');
+
+        $response->assertStatus(200);
+        $response->assertDontSee('value="admin@example.com"', false);
+        $response->assertDontSee('value="password"', false);
+    }
+
+    public function test_intended_unauthorized_url_is_cleared_on_login_for_non_super_admin_user(): void
+    {
+        $user = User::factory()->create([
+            'status' => 'active',
+        ]);
+        $user->givePermissionTo('sales-orders.view');
+
+        // Simulate user attempting to access forbidden route before login
+        $this->get(route('admin.users.index'));
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        // Should redirect to sales-orders index (their home route) rather than users index (which is forbidden)
+        $response->assertRedirect(route('admin.sales-orders.index'));
+    }
+
+    public function test_user_with_bills_view_permission_redirects_to_bills_index_after_login(): void
+    {
+        $user = User::factory()->create([
+            'status' => 'active',
+        ]);
+        $user->givePermissionTo('bills.view');
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('admin.bills.index'));
+    }
+
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create([

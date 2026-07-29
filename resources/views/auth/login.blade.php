@@ -68,7 +68,7 @@
                 <!-- Email Input -->
                 <div class="space-y-1.5">
                     <label for="email" class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider">Email Address</label>
-                    <input type="email" id="email" name="email" value="{{ old('email', 'admin@example.com') }}" required autofocus
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
                         class="w-full px-4 py-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                         placeholder="admin@example.com">
                 </div>
@@ -76,7 +76,7 @@
                 <!-- Password Input -->
                 <div class="space-y-1.5">
                     <label for="password" class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider">Password</label>
-                    <input type="password" id="password" name="password" required value="password"
+                    <input type="password" id="password" name="password" required
                         class="w-full px-4 py-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                         placeholder="••••••••">
                 </div>

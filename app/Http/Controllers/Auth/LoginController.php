@@ -78,10 +78,26 @@ class LoginController extends Controller
 
         $targetRoute = $user->getHomeRoute();
         
-        // If intended URL is dashboard but user cannot view dashboard, override to home route
+        // Verify user has authorization for intended URL, otherwise fallback to home route
         $intendedUrl = session()->get('url.intended');
-        if ($intendedUrl === route('admin.dashboard') && !$user->can('dashboard.view')) {
-            session()->forget('url.intended');
+        if ($intendedUrl) {
+            try {
+                $intendedRequest = Request::create($intendedUrl, 'GET');
+                $route = \Illuminate\Support\Facades\Route::getRoutes()->match($intendedRequest);
+                $middlewares = $route->gatherMiddleware();
+
+                foreach ($middlewares as $middleware) {
+                    if (is_string($middleware) && str_starts_with($middleware, 'permission:')) {
+                        $permission = explode(':', $middleware, 2)[1];
+                        if (!$user->can($permission)) {
+                            session()->forget('url.intended');
+                            break;
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                session()->forget('url.intended');
+            }
         }
 
         return redirect()->intended($targetRoute)
