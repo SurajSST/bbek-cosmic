@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -65,6 +66,8 @@ class RoleController extends Controller
         // Reset Spatie cached permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        ActivityLog::record('created_role', "Created Role '{$role->name}'", $role);
+
         return redirect()->route('admin.roles.index')
             ->with('success', "Role '{$role->name}' was created successfully.");
     }
@@ -111,6 +114,8 @@ class RoleController extends Controller
         // Reset Spatie cached permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        ActivityLog::record('updated_role', "Updated Role '{$role->name}'", $role);
+
         return redirect()->route('admin.roles.index')
             ->with('success', "Role '{$role->name}' was updated successfully.");
     }
@@ -135,6 +140,8 @@ class RoleController extends Controller
 
         // Reset Spatie cached permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        ActivityLog::record('deleted_role', "Deleted Role '{$roleName}'");
 
         return redirect()->route('admin.roles.index')
             ->with('success', "Role '{$roleName}' was deleted successfully.");

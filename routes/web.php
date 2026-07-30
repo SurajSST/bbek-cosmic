@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\BillController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
@@ -33,6 +34,11 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->middleware('permission:dashboard.view')
             ->name('dashboard');
+
+        // Activity Logs
+        Route::middleware('permission:activity-logs.view')->group(function () {
+            Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        });
 
         // User Management
         Route::middleware('permission:users.view')->group(function () {

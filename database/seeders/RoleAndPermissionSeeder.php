@@ -61,6 +61,10 @@ class RoleAndPermissionSeeder extends Seeder
                 'upload-sos.edit',
                 'upload-sos.delete',
             ],
+            'activity-logs' => [
+                'activity-logs.view',
+                'activity-logs.delete',
+            ],
         ];
 
         // Create or fetch permissions

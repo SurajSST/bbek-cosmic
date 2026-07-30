@@ -202,7 +202,7 @@
                             <input type="hidden" :name="`items[${index}][id]`" x-model="item.id">
 
                             <!-- Product Name -->
-                            <div class="sm:col-span-4">
+                            <div class="sm:col-span-3">
                                 <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Product / Maintenance Name</label>
                                 <input type="text" :name="`items[${index}][product_name]`" x-model="item.product_name" required
                                     class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -222,17 +222,24 @@
                                     class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             </div>
 
+                            <!-- Item Remarks (Optional) -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Remarks <span class="font-normal lowercase text-slate-400">(optional)</span></label>
+                                <input type="text" :name="`items[${index}][remarks]`" x-model="item.remarks" placeholder="Optional notes..."
+                                    class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+
                             <!-- Total Price -->
-                            <div class="sm:col-span-3">
+                            <div class="sm:col-span-2">
                                 <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Total (NRs)</label>
-                                <div class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-mono font-bold">
+                                <div class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-mono font-bold truncate">
                                     NRs. <span x-text="((parseFloat(item.quantity) || 0) * (parseFloat(item.unit_price) || 0)).toFixed(2)"></span>
                                 </div>
                             </div>
 
                             <!-- Remove Button -->
                             <div class="sm:col-span-1 text-right sm:pt-4">
-                                <button type="button" @click="removeItem(index)" x-show="items.length > 1" class="text-rose-500 hover:text-rose-700 p-1 text-xs font-semibold">
+                                <button type="button" @click="removeItem(index)" x-show="items.length > 1" class="text-rose-500 hover:text-rose-700 p-1 text-xs font-semibold" title="Remove item">
                                     ✕
                                 </button>
                             </div>

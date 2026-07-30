@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -110,6 +111,8 @@ class PermissionController extends Controller
         // Reset Spatie cached permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        ActivityLog::record('created_permission', "Created Permission '{$permission->name}'", $permission);
+
         return redirect()->route('admin.permissions.index')
             ->with('success', "Permission '{$permission->name}' created and assigned to Super Admin.");
     }
@@ -128,6 +131,8 @@ class PermissionController extends Controller
 
         // Reset Spatie cached permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        ActivityLog::record('deleted_permission', "Deleted Permission '{$permissionName}'");
 
         return redirect()->route('admin.permissions.index')
             ->with('success', "Permission '{$permissionName}' deleted successfully.");

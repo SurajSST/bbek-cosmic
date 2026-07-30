@@ -85,15 +85,6 @@
                         </th>
 
                         <th class="py-3.5 px-4 font-semibold">
-                            <a href="{{ route('admin.upload-sos.index', array_merge(request()->query(), ['sort' => 'billed_from', 'dir' => request('sort') === 'billed_from' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                From
-                                @if(request('sort') === 'billed_from')
-                                    <span>{{ request('dir') === 'asc' ? '↑' : '↓' }}</span>
-                                @endif
-                            </a>
-                        </th>
-
-                        <th class="py-3.5 px-4 font-semibold">
                             <a href="{{ route('admin.upload-sos.index', array_merge(request()->query(), ['sort' => 'billed_to', 'dir' => request('sort') === 'billed_to' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
                                 To
                                 @if(request('sort') === 'billed_to')
@@ -106,15 +97,6 @@
                             <a href="{{ route('admin.upload-sos.index', array_merge(request()->query(), ['sort' => 'status', 'dir' => request('sort') === 'status' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
                                 Status
                                 @if(request('sort') === 'status')
-                                    <span>{{ request('dir') === 'asc' ? '↑' : '↓' }}</span>
-                                @endif
-                            </a>
-                        </th>
-
-                        <th class="py-3.5 px-4 font-semibold">
-                            <a href="{{ route('admin.upload-sos.index', array_merge(request()->query(), ['sort' => 'amount', 'dir' => request('sort') === 'amount' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                Amount
-                                @if(request('sort') === 'amount')
                                     <span>{{ request('dir') === 'asc' ? '↑' : '↓' }}</span>
                                 @endif
                             </a>
@@ -146,12 +128,6 @@
                                 </span>
                             </td>
 
-                            <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-semibold">
-                                <span class="px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 font-medium">
-                                    {{ $item->billed_from }}
-                                </span>
-                            </td>
-
                             <td class="py-3.5 px-4 font-semibold text-slate-900 dark:text-slate-100">
                                 {{ $item->billed_to }}
                             </td>
@@ -169,10 +145,6 @@
                                 <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border {{ $statusStyle }}">
                                     {{ $item->status }}
                                 </span>
-                            </td>
-
-                            <td class="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
-                                {{ $item->amount ? 'NRs. ' . number_format($item->amount, 2) : '—' }}
                             </td>
 
                             <td class="py-3.5 px-4 text-center">
@@ -225,7 +197,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="py-12 text-center text-slate-400">
+                            <td colspan="8" class="py-12 text-center text-slate-400">
                                 <div class="max-w-xs mx-auto space-y-2">
                                     <svg class="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     <p class="font-medium text-slate-600 dark:text-slate-300">No Sales Orders found</p>

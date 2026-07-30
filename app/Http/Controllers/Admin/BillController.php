@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Bill;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -75,7 +76,7 @@ class BillController extends Controller
                 $slipImagePath = $request->file('slip_image')->store('bills/slips', 'public');
             }
 
-            Bill::create([
+            $createdBill = Bill::create([
                 'bill_number' => $validated['bill_number'],
                 'billed_from' => $validated['billed_from'],
                 'billed_to' => $validated['billed_to'],
@@ -87,6 +88,8 @@ class BillController extends Controller
                 'description' => $validated['description'] ?? null,
                 'created_by' => Auth::id(),
             ]);
+
+            ActivityLog::record('created_bill', "Uploaded Bill '{$createdBill->bill_number}'", $createdBill);
         });
 
         return redirect()->route('admin.bills.index')
@@ -152,6 +155,8 @@ class BillController extends Controller
                 'remarks' => $validated['remarks'] ?? null,
                 'description' => $validated['description'] ?? null,
             ]);
+
+            ActivityLog::record('updated_bill', "Updated Bill '{$bill->bill_number}'", $bill);
         });
 
         return redirect()->route('admin.bills.index')
@@ -173,6 +178,8 @@ class BillController extends Controller
         }
 
         $bill->delete();
+
+        ActivityLog::record('deleted_bill', "Deleted Bill '{$billNumber}'");
 
         return redirect()->route('admin.bills.index')
             ->with('success', "Bill '{$billNumber}' deleted successfully.");

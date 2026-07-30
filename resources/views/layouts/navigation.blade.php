@@ -24,20 +24,32 @@
     <div class="flex-1 overflow-y-auto py-6 px-3.5 space-y-6">
 
         <!-- Core System -->
-        @can('dashboard.view')
+        @canany(['dashboard.view', 'activity-logs.view'])
             <div>
                 <p class="px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2.5">Core System</p>
                 <nav class="space-y-1">
-                    <a href="{{ route('admin.dashboard') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
-                        @if(request()->routeIs('admin.dashboard'))
-                            <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
-                        @endif
-                        <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                        Dashboard
-                    </a>
+                    @can('dashboard.view')
+                        <a href="{{ route('admin.dashboard') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
+                            @if(request()->routeIs('admin.dashboard'))
+                                <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
+                            @endif
+                            <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            Dashboard
+                        </a>
+                    @endcan
+
+                    @can('activity-logs.view')
+                        <a href="{{ route('admin.activity-logs.index') }}" class="group relative flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all {{ request()->routeIs('admin.activity-logs.*') ? 'bg-gradient-to-r from-indigo-600/20 to-violet-600/10 text-indigo-400 font-bold border border-indigo-500/30 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:bg-slate-900/80 hover:text-slate-200' }}">
+                            @if(request()->routeIs('admin.activity-logs.*'))
+                                <span class="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-indigo-500"></span>
+                            @endif
+                            <svg class="w-4 h-4 text-indigo-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Activity Logs
+                        </a>
+                    @endcan
                 </nav>
             </div>
-        @endcan
+        @endcanany
 
         <!-- Sales & Operations -->
         @canany(['sales-orders.view', 'sales-orders.bulk-upload', 'bills.view', 'upload-sos.view'])

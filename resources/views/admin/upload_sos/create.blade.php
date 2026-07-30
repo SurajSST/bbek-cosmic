@@ -4,12 +4,10 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6" x-data="{
-    soFromPreset: 'Cloud',
-    soFromCustom: 'Cloud',
-    billedFromPreset: 'Cloud',
-    billedFromCustom: 'Cloud',
-    billedToPreset: 'PBS',
-    billedToCustom: 'PBS',
+    soFromPreset: 'Cosmic',
+    soFromCustom: 'Cosmic',
+    billedToPreset: 'Prativa',
+    billedToCustom: 'Prativa',
     
     // File & Preview state
     imagePreviewUrl: null,
@@ -164,14 +162,14 @@
                     Sales Order Information & Parties
                 </h3>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
 
                     <!-- SO Number -->
                     <div>
                         <label for="so_number" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                             SO Number <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" id="so_number" name="so_number" value="{{ old('so_number', 'SO-' . strtoupper(Str::random(6))) }}" required
+                        <input type="text" id="so_number" name="so_number" value="{{ old('so_number', 'SO-') }}" required
                             class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
 
@@ -182,32 +180,14 @@
                         </label>
                         <select x-model="soFromPreset" @change="if (soFromPreset !== 'Other') soFromCustom = soFromPreset; else soFromCustom = ''"
                             class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2">
+                            <option value="Cosmic">Cosmic</option>
                             <option value="Cloud">Cloud</option>
                             <option value="Dragon">Dragon</option>
-                            <option value="Cosmic">Cosmic</option>
                             <option value="Other">Other (Custom Write-in)</option>
                         </select>
                         <input type="text" name="so_from" x-model="soFromCustom" required placeholder="Enter SO source..."
                             :readonly="soFromPreset !== 'Other'"
                             :class="soFromPreset !== 'Other' ? 'bg-slate-100 dark:bg-slate-800/60 opacity-80 cursor-not-allowed' : 'bg-white dark:bg-slate-900'"
-                            class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-
-                    <!-- Billed From -->
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                            Billed From <span class="text-rose-500">*</span>
-                        </label>
-                        <select x-model="billedFromPreset" @change="if (billedFromPreset !== 'Other') billedFromCustom = billedFromPreset; else billedFromCustom = ''"
-                            class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2">
-                            <option value="Cloud">Cloud</option>
-                            <option value="Dragon">Dragon</option>
-                            <option value="Cosmic">Cosmic</option>
-                            <option value="Other">Other (Custom Write-in)</option>
-                        </select>
-                        <input type="text" name="billed_from" x-model="billedFromCustom" required placeholder="Enter entity name..."
-                            :readonly="billedFromPreset !== 'Other'"
-                            :class="billedFromPreset !== 'Other' ? 'bg-slate-100 dark:bg-slate-800/60 opacity-80 cursor-not-allowed' : 'bg-white dark:bg-slate-900'"
                             class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
 
@@ -218,6 +198,7 @@
                         </label>
                         <select x-model="billedToPreset" @change="if (billedToPreset !== 'Other') billedToCustom = billedToPreset; else billedToCustom = ''"
                             class="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2">
+                            <option value="Prativa">Prativa</option>
                             <option value="PBS">PBS</option>
                             <option value="Prativa Plus Two">Prativa Plus Two</option>
                             <option value="Prativa School">Prativa School</option>
@@ -240,20 +221,11 @@
                         </label>
                         <select id="status" name="status" required
                             class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <option value="billed" {{ old('status', 'billed') === 'billed' ? 'selected' : '' }}>Billed</option>
-                            <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="pending" {{ old('status', 'pending') === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="billed" {{ old('status') === 'billed' ? 'selected' : '' }}>Billed</option>
                             <option value="paid" {{ old('status') === 'paid' ? 'selected' : '' }}>Paid</option>
                             <option value="cancelled" {{ old('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
-                    </div>
-
-                    <!-- Total Amount -->
-                    <div>
-                        <label for="amount" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                            Amount (NRs.) <span class="text-slate-400 font-normal lowercase">(optional)</span>
-                        </label>
-                        <input type="number" step="0.01" min="0" id="amount" name="amount" value="{{ old('amount') }}" placeholder="0.00"
-                            class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                 </div>
             </div>

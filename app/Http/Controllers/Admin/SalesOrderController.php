@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\SalesOrder;
 use App\Models\SalesOrderItem;
 use Illuminate\Http\RedirectResponse;
@@ -116,6 +117,8 @@ class SalesOrderController extends Controller
                     'remarks' => $item['remarks'] ?? null,
                 ]);
             }
+
+            ActivityLog::record('created_sales_order', "Created Sales Order '{$order->so_number}' with " . count($validated['items']) . " item(s)", $order);
         });
 
         return redirect()->route('admin.sales-orders.index')
@@ -234,6 +237,8 @@ class SalesOrderController extends Controller
 
             // Delete removed items
             $salesOrder->items()->whereNotIn('id', $keptItemIds)->delete();
+
+            ActivityLog::record('updated_sales_order', "Updated Sales Order '{$salesOrder->so_number}'", $salesOrder);
         });
 
         return redirect()->route('admin.sales-orders.index')
@@ -256,6 +261,8 @@ class SalesOrderController extends Controller
         }
 
         $salesOrder->delete();
+
+        ActivityLog::record('deleted_sales_order', "Deleted Sales Order '{$soNumber}'");
 
         return redirect()->route('admin.sales-orders.index')
             ->with('success', "Sales Order '{$soNumber}' was deleted successfully.");
@@ -285,6 +292,8 @@ class SalesOrderController extends Controller
             'returned_at' => now(),
             'remarks' => $validated['remarks'] ?? $item->remarks,
         ]);
+
+        ActivityLog::record('returned_sales_order_item', "Processed return for item '{$item->product_name}' ({$newReturnedQty} returned)", $item);
 
         return back()->with('success', "Return status updated for item '{$item->product_name}'.");
     }
@@ -585,6 +594,8 @@ class SalesOrderController extends Controller
         }
 
         $message = "Bulk upload process completed. {$successSoCount} Sales Order(s) created with {$totalItemsCreated} total product item(s).";
+
+        ActivityLog::record('bulk_uploaded_sales_orders', $message);
 
         if (!empty($errors)) {
             return redirect()->route('admin.sales-orders.bulk-upload')

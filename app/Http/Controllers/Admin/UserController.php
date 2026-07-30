@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -72,6 +73,8 @@ class UserController extends Controller
             $user->syncRoles($validated['roles']);
         }
 
+        ActivityLog::record('created_user', "Created User '{$user->name}' ({$user->email})", $user);
+
         return redirect()->route('admin.users.index')
             ->with('success', "User '{$user->name}' was created successfully.");
     }
@@ -140,6 +143,8 @@ class UserController extends Controller
             $user->syncRoles([]);
         }
 
+        ActivityLog::record('updated_user', "Updated User '{$user->name}'", $user);
+
         return redirect()->route('admin.users.index')
             ->with('success', "User '{$user->name}' was updated successfully.");
     }
@@ -164,6 +169,8 @@ class UserController extends Controller
 
         $userName = $user->name;
         $user->delete();
+
+        ActivityLog::record('deleted_user', "Deleted User '{$userName}'");
 
         return redirect()->route('admin.users.index')
             ->with('success', "User '{$userName}' was deleted successfully.");

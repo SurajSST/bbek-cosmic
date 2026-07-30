@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\UploadSo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -58,7 +59,7 @@ class UploadSoController extends Controller
         $validated = $request->validate([
             'so_number' => ['required', 'string', 'max:100', 'unique:upload_sos,so_number'],
             'so_from' => ['required', 'string', 'max:100'],
-            'billed_from' => ['required', 'string', 'max:100'],
+            'billed_from' => ['nullable', 'string', 'max:100'],
             'billed_to' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::in(['pending', 'billed', 'paid', 'cancelled'])],
             'amount' => ['nullable', 'numeric', 'min:0'],
@@ -76,10 +77,10 @@ class UploadSoController extends Controller
                 $slipImagePath = $request->file('slip_image')->store('upload_sos/slips', 'public');
             }
 
-            UploadSo::create([
+            $createdSo = UploadSo::create([
                 'so_number' => $validated['so_number'],
                 'so_from' => $validated['so_from'],
-                'billed_from' => $validated['billed_from'],
+                'billed_from' => $validated['billed_from'] ?? null,
                 'billed_to' => $validated['billed_to'],
                 'status' => $validated['status'],
                 'amount' => $validated['amount'] ?? null,
@@ -89,6 +90,8 @@ class UploadSoController extends Controller
                 'description' => $validated['description'] ?? null,
                 'created_by' => Auth::id(),
             ]);
+
+            ActivityLog::record('uploaded_so_created', "Uploaded Sales Order '{$createdSo->so_number}'", $createdSo);
         });
 
         return redirect()->route('admin.upload-sos.index')
@@ -121,7 +124,7 @@ class UploadSoController extends Controller
         $validated = $request->validate([
             'so_number' => ['required', 'string', 'max:100', Rule::unique('upload_sos')->ignore($uploadSo->id)],
             'so_from' => ['required', 'string', 'max:100'],
-            'billed_from' => ['required', 'string', 'max:100'],
+            'billed_from' => ['nullable', 'string', 'max:100'],
             'billed_to' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::in(['pending', 'billed', 'paid', 'cancelled'])],
             'amount' => ['nullable', 'numeric', 'min:0'],
@@ -149,13 +152,15 @@ class UploadSoController extends Controller
             $uploadSo->update([
                 'so_number' => $validated['so_number'],
                 'so_from' => $validated['so_from'],
-                'billed_from' => $validated['billed_from'],
+                'billed_from' => $validated['billed_from'] ?? null,
                 'billed_to' => $validated['billed_to'],
                 'status' => $validated['status'],
                 'amount' => $validated['amount'] ?? null,
                 'remarks' => $validated['remarks'] ?? null,
                 'description' => $validated['description'] ?? null,
             ]);
+
+            ActivityLog::record('uploaded_so_updated', "Updated Uploaded Sales Order '{$uploadSo->so_number}'", $uploadSo);
         });
 
         return redirect()->route('admin.upload-sos.index')
@@ -177,6 +182,8 @@ class UploadSoController extends Controller
         }
 
         $uploadSo->delete();
+
+        ActivityLog::record('uploaded_so_deleted', "Deleted Uploaded Sales Order '{$soNumber}'");
 
         return redirect()->route('admin.upload-sos.index')
             ->with('success', "Sales Order '{$soNumber}' deleted successfully.");

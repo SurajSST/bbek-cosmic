@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -76,6 +77,8 @@ class LoginController extends Controller
             'last_login_at' => now(),
         ])->save();
 
+        ActivityLog::record('logged_in', "User '{$user->name}' logged in successfully", $user);
+
         $targetRoute = $user->getHomeRoute();
         
         // Verify user has authorization for intended URL, otherwise fallback to home route
@@ -109,6 +112,11 @@ class LoginController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+        if ($user) {
+            ActivityLog::record('logged_out', "User '{$user->name}' logged out", $user);
+        }
+
         Auth::logout();
 
         $request->session()->invalidate();
