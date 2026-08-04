@@ -185,9 +185,13 @@
 
                             <!-- Billed From -->
                             <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-semibold">
-                                <span class="px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 font-medium">
-                                    {{ $order->billed_from }}
-                                </span>
+                                @if($order->billed_from)
+                                    <span class="px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 font-medium">
+                                        {{ $order->billed_from }}
+                                    </span>
+                                @else
+                                    <span class="text-slate-400 text-xs italic">—</span>
+                                @endif
                             </td>
 
                             <!-- Billed To -->

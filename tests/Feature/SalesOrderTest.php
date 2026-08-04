@@ -190,4 +190,69 @@ class SalesOrderTest extends TestCase
         $response->assertRedirect(route('admin.sales-orders.index'));
         $this->assertDatabaseMissing('sales_orders', ['id' => $order->id]);
     }
+
+    public function test_authorized_user_can_create_sales_order_without_billed_from(): void
+    {
+        $response = $this->actingAs($this->admin)->post('/admin/sales-orders', [
+            'so_number' => 'SO-NO-BILLED-FROM',
+            'so_from' => 'Cloud',
+            'billed_to' => 'PBS',
+            'billed_status' => 'pending',
+            'items' => [
+                [
+                    'product_name' => 'Service Item',
+                    'quantity' => 1,
+                    'unit_price' => 100,
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect(route('admin.sales-orders.index'));
+
+        $this->assertDatabaseHas('sales_orders', [
+            'so_number' => 'SO-NO-BILLED-FROM',
+            'billed_from' => null,
+        ]);
+    }
+
+    public function test_authorized_user_can_update_sales_order_without_billed_from(): void
+    {
+        $order = SalesOrder::create([
+            'so_number' => 'SO-EDIT-OPTIONAL',
+            'so_from' => 'Cloud',
+            'billed_from' => 'Cloud',
+            'billed_to' => 'PBS',
+            'billed_status' => 'pending',
+        ]);
+
+        $item = $order->items()->create([
+            'product_name' => 'Initial Item',
+            'quantity' => 1,
+            'unit_price' => 50,
+            'total_price' => 50,
+        ]);
+
+        $response = $this->actingAs($this->admin)->put("/admin/sales-orders/{$order->id}", [
+            'so_number' => 'SO-EDIT-OPTIONAL',
+            'so_from' => 'Cloud',
+            'billed_from' => '',
+            'billed_to' => 'PBS',
+            'billed_status' => 'billed',
+            'items' => [
+                [
+                    'id' => $item->id,
+                    'product_name' => 'Initial Item',
+                    'quantity' => 1,
+                    'unit_price' => 50,
+                ],
+            ],
+        ]);
+
+        $response->assertRedirect(route('admin.sales-orders.index'));
+
+        $this->assertDatabaseHas('sales_orders', [
+            'id' => $order->id,
+            'billed_from' => null,
+        ]);
+    }
 }
