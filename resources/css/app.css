@@ -34,6 +34,22 @@
         -webkit-box-shadow: 0 0 0px 1000px rgba(15, 23, 42, 0.95) inset;
         transition: background-color 5000s ease-in-out 0s;
     }
+
+    /* Ensure native Select and Option dropdown elements render with crisp contrast in Dark Mode */
+    select {
+        color-scheme: light dark;
+    }
+
+    select option {
+        background-color: #ffffff;
+        color: #0f172a;
+    }
+
+    .dark select option,
+    html.dark select option {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+    }
 }
 
 /* Safe Area Inset Utility Classes for Mobile & Standalone PWA */

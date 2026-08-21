@@ -374,23 +374,25 @@ onUnmounted(() => {
 
                     <!-- Theme Selector Dropdown -->
                     <div class="relative">
-                        <button @click="themeMenuOpen = !themeMenuOpen" class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition shadow-2xs" title="Switch Theme">
+                        <button @click="themeMenuOpen = !themeMenuOpen; profileMenuOpen = false" class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition shadow-2xs" title="Switch Theme">
                             <svg v-if="!isDarkActive" class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             <svg v-else class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         </button>
 
-                        <div v-show="themeMenuOpen" @click.away="themeMenuOpen = false" class="absolute right-0 mt-2 w-44 py-1.5 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 z-50 overflow-hidden">
-                            <button @click="setTheme('light')" class="w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 transition" :class="currentTheme === 'light' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-300'">
+                        <div v-if="themeMenuOpen" @click="themeMenuOpen = false" class="fixed inset-0 z-40"></div>
+
+                        <div v-show="themeMenuOpen" class="absolute right-0 mt-2 w-44 py-1.5 bg-white dark:bg-[#0c121e] rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 z-50 overflow-hidden">
+                            <button @click="setTheme('light')" class="w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800/80 transition" :class="currentTheme === 'light' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-300'">
                                 <span class="flex items-center gap-2">☀️ Light Mode</span>
                                 <span v-show="currentTheme === 'light'">✓</span>
                             </button>
 
-                            <button @click="setTheme('dark')" class="w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 transition" :class="currentTheme === 'dark' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-300'">
+                            <button @click="setTheme('dark')" class="w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800/80 transition" :class="currentTheme === 'dark' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-300'">
                                 <span class="flex items-center gap-2">🌙 Dark Mode</span>
                                 <span v-show="currentTheme === 'dark'">✓</span>
                             </button>
 
-                            <button @click="setTheme('system')" class="w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 transition" :class="currentTheme === 'system' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-300'">
+                            <button @click="setTheme('system')" class="w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800/80 transition" :class="currentTheme === 'system' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-300'">
                                 <span class="flex items-center gap-2">💻 System Auto</span>
                                 <span v-show="currentTheme === 'system'">✓</span>
                             </button>
@@ -399,7 +401,7 @@ onUnmounted(() => {
 
                     <!-- User Profile Menu -->
                     <div class="relative">
-                        <button @click="profileMenuOpen = !profileMenuOpen" class="flex items-center gap-2 p-1 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-800">
+                        <button @click="profileMenuOpen = !profileMenuOpen; themeMenuOpen = false" class="flex items-center gap-2 p-1 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-800">
                             <div class="w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
                                 {{ (user?.name || 'A').charAt(0).toUpperCase() }}
                             </div>
@@ -414,7 +416,9 @@ onUnmounted(() => {
                             <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         
-                        <div v-show="profileMenuOpen" @click.away="profileMenuOpen = false" class="absolute right-0 mt-2 w-56 py-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 z-50">
+                        <div v-if="profileMenuOpen" @click="profileMenuOpen = false" class="fixed inset-0 z-40"></div>
+
+                        <div v-show="profileMenuOpen" class="absolute right-0 mt-2 w-56 py-2 bg-white dark:bg-[#0c121e] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 z-50">
                             <div class="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800">
                                 <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Signed in as</p>
                                 <p class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate mt-0.5">{{ user?.name }}</p>
@@ -422,7 +426,7 @@ onUnmounted(() => {
                             </div>
 
                             <div class="py-1 border-b border-slate-100 dark:border-slate-800">
-                                <button type="button" @click="passwordModalOpen = true; profileMenuOpen = false" class="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2.5 transition">
+                                <button type="button" @click="passwordModalOpen = true; profileMenuOpen = false" class="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center gap-2.5 transition">
                                     <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
                                     <span>Change Password</span>
                                 </button>
