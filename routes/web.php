@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\BillController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SalesOrderController;
 use App\Http\Controllers\Admin\UploadSoController;
@@ -29,6 +30,9 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     // Protected Admin Group
     Route::prefix('admin')->name('admin.')->group(function () {
+
+        // User Self-Service Profile Password Update
+        Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])

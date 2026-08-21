@@ -6,45 +6,48 @@
 <div x-data="{ imageModalOpen: false, modalImageUrl: '', modalTitle: '' }" class="space-y-6">
 
     <!-- Header & Action Bar -->
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Sales Orders</h2>
+            <h2 class="text-xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
+                <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                Sales Orders
+            </h2>
             <p class="text-xs text-slate-500 dark:text-slate-400">Manage sales orders, billing details, attached receipts, and item-level returns.</p>
         </div>
 
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
             @can('sales-orders.bulk-upload')
-                <a href="{{ route('admin.sales-orders.bulk-upload') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs font-semibold shadow-sm transition">
-                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Bulk Upload SO
+                <a href="{{ route('admin.sales-orders.bulk-upload') }}" class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750 text-xs font-semibold shadow-xs transition">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    <span>Bulk Upload</span>
                 </a>
             @endcan
 
             @can('sales-orders.create')
-                <a href="{{ route('admin.sales-orders.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Create Sales Order
+                <a href="{{ route('admin.sales-orders.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold shadow-md shadow-indigo-600/25 transition hover:scale-[1.02] active:scale-[0.98]">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"></path></svg>
+                    <span>Create Order</span>
                 </a>
             @endcan
         </div>
     </div>
 
-    <!-- Search & Filter Bar -->
-    <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <form method="GET" action="{{ route('admin.sales-orders.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+    <!-- Search & Filter Card -->
+    <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-xs">
+        <form method="GET" action="{{ route('admin.sales-orders.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3">
             <input type="hidden" name="sort" value="{{ request('sort', 'created_at') }}">
             <input type="hidden" name="dir" value="{{ request('dir', 'desc') }}">
 
-            <!-- Search Keyword (SO Number, Billed From/To, or Bill No) -->
-            <div class="sm:col-span-2 relative">
+            <!-- Search Keyword -->
+            <div class="sm:col-span-6 relative">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by SO #, Bill No, From, To..."
-                    class="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
 
             <!-- Billed Status Filter -->
-            <div>
-                <select name="status" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+            <div class="sm:col-span-3">
+                <select name="status" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
                     <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>All Billed Statuses</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="billed" {{ request('status') === 'billed' ? 'selected' : '' }}>Billed</option>
@@ -53,14 +56,14 @@
                 </select>
             </div>
 
-            <!-- Submit Filter Button -->
-            <div class="flex gap-2">
-                <button type="submit" class="w-full px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-semibold transition">
-                    Apply Filter
+            <!-- Submit & Reset Buttons -->
+            <div class="sm:col-span-3 flex gap-2">
+                <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-xs transition">
+                    Filter
                 </button>
                 @if (request('search') || (request('status') && request('status') !== 'all'))
-                    <a href="{{ route('admin.sales-orders.index') }}" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-xs font-semibold transition flex items-center justify-center">
-                        Reset
+                    <a href="{{ route('admin.sales-orders.index') }}" class="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold transition flex items-center justify-center" title="Reset Filters">
+                        ✕
                     </a>
                 @endif
             </div>
@@ -68,11 +71,11 @@
     </div>
 
     <!-- Sales Orders Table -->
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                    <tr class="bg-slate-50/80 dark:bg-slate-800/60 border-b border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400">
                         <th class="py-3.5 px-4 font-semibold w-12 text-center">S.N.</th>
                         
                         <!-- Sortable SO Number -->
@@ -95,7 +98,7 @@
                             </a>
                         </th>
 
-                        <th class="py-3.5 px-4 font-semibold">Product / Items Summary</th>
+                        <th class="py-3.5 px-4 font-semibold">Products & Items</th>
                         
                         <!-- Sortable Billed From -->
                         <th class="py-3.5 px-4 font-semibold">
@@ -118,9 +121,9 @@
                         </th>
 
                         <!-- Sortable Billed Status -->
-                        <th class="py-3.5 px-4 font-semibold">
-                            <a href="{{ route('admin.sales-orders.index', array_merge(request()->query(), ['sort' => 'billed_status', 'dir' => request('sort') === 'billed_status' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                Billed Status
+                        <th class="py-3.5 px-4 font-semibold text-center">
+                            <a href="{{ route('admin.sales-orders.index', array_merge(request()->query(), ['sort' => 'billed_status', 'dir' => request('sort') === 'billed_status' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+                                Status
                                 @if(request('sort') === 'billed_status')
                                     <span>{{ request('dir') === 'asc' ? '↑' : '↓' }}</span>
                                 @endif
@@ -137,39 +140,37 @@
                             </a>
                         </th>
 
-                        <th class="py-3.5 px-4 font-semibold text-center">Bill Image</th>
-                        <th class="py-3.5 px-4 font-semibold text-center">Slip Image</th>
-                        <th class="py-3.5 px-4 font-semibold">Remarks</th>
+                        <th class="py-3.5 px-4 font-semibold text-center">Receipts</th>
                         <th class="py-3.5 px-4 font-semibold text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/70">
                     @forelse ($salesOrders as $index => $order)
-                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
+                        <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/30 transition">
                             <!-- S.N. -->
-                            <td class="py-3.5 px-4 text-center font-mono text-slate-400">
+                            <td class="py-3.5 px-4 text-center font-mono text-slate-400 text-xs">
                                 {{ $salesOrders->firstItem() + $index }}
                             </td>
 
                             <!-- Sales Order (SO) -->
                             <td class="py-3.5 px-4">
-                                <a href="{{ route('admin.sales-orders.show', $order) }}" class="font-mono font-bold text-indigo-600 dark:text-indigo-400 hover:underline text-sm block">
+                                <a href="{{ route('admin.sales-orders.show', $order) }}" class="font-mono font-bold text-indigo-600 dark:text-indigo-400 hover:underline text-xs block">
                                     {{ $order->so_number }}
                                 </a>
                                 <span class="text-[10px] text-slate-400">{{ $order->created_at->format('M d, Y') }}</span>
                             </td>
 
                             <!-- SO From -->
-                            <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-semibold">
-                                <span class="px-2 py-0.5 rounded-lg bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800/60 font-medium">
+                            <td class="py-3.5 px-4">
+                                <span class="px-2.5 py-1 rounded-lg bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/60 font-semibold text-[11px]">
                                     {{ $order->so_from ?: '—' }}
                                 </span>
                             </td>
 
-                            <!-- Product / Items Summary -->
+                            <!-- Products & Items Summary -->
                             <td class="py-3.5 px-4">
-                                <div class="space-y-1">
-                                    <div class="font-medium text-slate-900 dark:text-slate-100">
+                                <div class="space-y-0.5">
+                                    <div class="font-semibold text-slate-900 dark:text-slate-100">
                                         {{ $order->items->first()?->product_name ?? 'No items' }}
                                         @if ($order->items->count() > 1)
                                             <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-semibold">
@@ -177,16 +178,16 @@
                                             </span>
                                         @endif
                                     </div>
-                                    <div class="text-[10px] text-slate-400 font-mono">
+                                    <div class="text-[11px] text-slate-400 font-mono font-medium">
                                         Total: NRs. {{ number_format($order->items->sum('total_price'), 2) }}
                                     </div>
                                 </div>
                             </td>
 
                             <!-- Billed From -->
-                            <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-semibold">
+                            <td class="py-3.5 px-4">
                                 @if($order->billed_from)
-                                    <span class="px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 font-medium">
+                                    <span class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 font-semibold text-[11px]">
                                         {{ $order->billed_from }}
                                     </span>
                                 @else
@@ -195,12 +196,12 @@
                             </td>
 
                             <!-- Billed To -->
-                            <td class="py-3.5 px-4 font-semibold text-slate-900 dark:text-slate-100">
+                            <td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-200">
                                 {{ $order->billed_to }}
                             </td>
 
                             <!-- Billed Status -->
-                            <td class="py-3.5 px-4">
+                            <td class="py-3.5 px-4 text-center">
                                 @php
                                     $statusStyle = match($order->billed_status) {
                                         'paid' => 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
@@ -210,7 +211,7 @@
                                         default => 'bg-slate-50 text-slate-700 border-slate-200'
                                     };
                                 @endphp
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border {{ $statusStyle }}">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border {{ $statusStyle }}">
                                     {{ $order->billed_status }}
                                 </span>
                             </td>
@@ -220,31 +221,23 @@
                                 {{ $order->bill_no ?: '—' }}
                             </td>
 
-                            <!-- Bill Image -->
+                            <!-- Receipts (Bill & Slip) -->
                             <td class="py-3.5 px-4 text-center">
-                                @if ($order->bill_image_url)
-                                    <button @click="modalImageUrl = '{{ $order->bill_image_url }}'; modalTitle = 'Bill Receipt ({{ $order->so_number }})'; imageModalOpen = true" class="group relative inline-block">
-                                        <img src="{{ $order->bill_image_url }}" alt="Bill Image" class="w-9 h-9 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-105 transition">
-                                    </button>
-                                @else
-                                    <span class="text-slate-400 text-[11px] italic">No file</span>
-                                @endif
-                            </td>
-
-                            <!-- Slip Image -->
-                            <td class="py-3.5 px-4 text-center">
-                                @if ($order->slip_image_url)
-                                    <button @click="modalImageUrl = '{{ $order->slip_image_url }}'; modalTitle = 'Bank / Pay Slip ({{ $order->so_number }})'; imageModalOpen = true" class="group relative inline-block">
-                                        <img src="{{ $order->slip_image_url }}" alt="Slip Image" class="w-9 h-9 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-105 transition">
-                                    </button>
-                                @else
-                                    <span class="text-slate-400 text-[11px] italic">No file</span>
-                                @endif
-                            </td>
-
-                            <!-- Remarks -->
-                            <td class="py-3.5 px-4 text-slate-500 dark:text-slate-400 max-w-xs truncate">
-                                {{ $order->remarks ?: '—' }}
+                                <div class="flex items-center justify-center gap-1.5">
+                                    @if ($order->bill_image_url)
+                                        <button @click="modalImageUrl = '{{ $order->bill_image_url }}'; modalTitle = 'Bill Receipt ({{ $order->so_number }})'; imageModalOpen = true" class="group relative" title="View Bill Receipt">
+                                            <img src="{{ $order->bill_image_url }}" alt="Bill" class="w-8 h-8 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:scale-110 transition">
+                                        </button>
+                                    @endif
+                                    @if ($order->slip_image_url)
+                                        <button @click="modalImageUrl = '{{ $order->slip_image_url }}'; modalTitle = 'Bank Slip ({{ $order->so_number }})'; imageModalOpen = true" class="group relative" title="View Bank Slip">
+                                            <img src="{{ $order->slip_image_url }}" alt="Slip" class="w-8 h-8 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:scale-110 transition">
+                                        </button>
+                                    @endif
+                                    @if (!$order->bill_image_url && !$order->slip_image_url)
+                                        <span class="text-slate-400 text-[10px] italic">—</span>
+                                    @endif
+                                </div>
                             </td>
 
                             <!-- Actions -->
@@ -261,7 +254,7 @@
                                     @endcan
 
                                     @can('sales-orders.delete')
-                                        <form method="POST" action="{{ route('admin.sales-orders.destroy', $order) }}" onsubmit="return confirm('Are you sure you want to delete Sales Order {{ $order->so_number }}? All items and uploaded receipts will be deleted.');">
+                                        <form method="POST" action="{{ route('admin.sales-orders.destroy', $order) }}" onsubmit="return confirm('Are you sure you want to delete Sales Order {{ $order->so_number }}?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Delete Order">
@@ -274,10 +267,10 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="11" class="py-12 text-center text-slate-400">
+                            <td colspan="10" class="py-12 text-center text-slate-400">
                                 <div class="max-w-xs mx-auto space-y-2">
                                     <svg class="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                                    <p class="font-medium text-slate-600 dark:text-slate-300">No sales orders found</p>
+                                    <p class="font-bold text-slate-700 dark:text-slate-300">No sales orders found</p>
                                     <p class="text-xs text-slate-400">Create your first sales order or adjust your search filters.</p>
                                 </div>
                             </td>
@@ -289,7 +282,7 @@
 
         <!-- Pagination -->
         @if ($salesOrders->hasPages())
-            <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+            <div class="p-4 border-t border-slate-200/80 dark:border-slate-800">
                 {{ $salesOrders->links() }}
             </div>
         @endif
@@ -297,13 +290,13 @@
 
     <!-- Image Lightbox Modal -->
     <div x-show="imageModalOpen" x-cloak class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div @click.away="imageModalOpen = false" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full p-6 shadow-2xl space-y-4">
+        <div @click.away="imageModalOpen = false" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full p-6 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <h3 class="font-bold text-slate-900 dark:text-white text-base" x-text="modalTitle"></h3>
+                <h3 class="font-bold text-slate-900 dark:text-white text-sm" x-text="modalTitle"></h3>
                 <button @click="imageModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm">✕</button>
             </div>
-            <div class="flex justify-center p-2 bg-slate-950/20 rounded-xl">
-                <img :src="modalImageUrl" alt="Receipt Full Image" class="max-h-[70vh] object-contain rounded-lg">
+            <div class="flex justify-center p-2 bg-slate-950/40 rounded-2xl">
+                <img :src="modalImageUrl" alt="Receipt Full Image" class="max-h-[70vh] object-contain rounded-xl">
             </div>
             <div class="flex justify-end gap-2 pt-2">
                 <a :href="modalImageUrl" target="_blank" download class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500">Download Image</a>

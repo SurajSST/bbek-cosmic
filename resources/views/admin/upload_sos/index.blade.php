@@ -6,9 +6,9 @@
 <div x-data="{ imageModalOpen: false, modalImageUrl: '', modalTitle: '' }" class="space-y-6">
 
     <!-- Header & Action Bar -->
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-            <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 class="text-xl font-bold font-heading text-slate-900 dark:text-white flex items-center gap-2">
                 <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 Upload SO Documents
             </h2>
@@ -16,27 +16,27 @@
         </div>
 
         @can('upload-sos.create')
-            <a href="{{ route('admin.upload-sos.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25 transition shrink-0">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                Upload Sales Order Image
+            <a href="{{ route('admin.upload-sos.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold shadow-md shadow-indigo-600/25 transition hover:scale-[1.02] active:scale-[0.98] shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"></path></svg>
+                <span>Upload SO Image</span>
             </a>
         @endcan
     </div>
 
-    <!-- Search & Filter Bar -->
-    <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <form method="GET" action="{{ route('admin.upload-sos.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+    <!-- Search & Filter Card -->
+    <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-xs">
+        <form method="GET" action="{{ route('admin.upload-sos.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3">
             <input type="hidden" name="sort" value="{{ request('sort', 'created_at') }}">
             <input type="hidden" name="dir" value="{{ request('dir', 'desc') }}">
 
-            <div class="sm:col-span-2 relative">
+            <div class="sm:col-span-6 relative">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by SO Number, From, To..."
-                    class="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
 
-            <div>
-                <select name="status" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+            <div class="sm:col-span-3">
+                <select name="status" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
                     <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>All SO Statuses</option>
                     <option value="billed" {{ request('status') === 'billed' ? 'selected' : '' }}>Billed</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
@@ -45,13 +45,13 @@
                 </select>
             </div>
 
-            <div class="flex gap-2">
-                <button type="submit" class="w-full px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 text-xs font-semibold transition">
-                    Apply Filter
+            <div class="sm:col-span-3 flex gap-2">
+                <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-xs transition">
+                    Filter
                 </button>
                 @if (request('search') || (request('status') && request('status') !== 'all'))
-                    <a href="{{ route('admin.upload-sos.index') }}" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-xs font-semibold transition flex items-center justify-center">
-                        Reset
+                    <a href="{{ route('admin.upload-sos.index') }}" class="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold transition flex items-center justify-center" title="Reset Filters">
+                        ✕
                     </a>
                 @endif
             </div>
@@ -59,11 +59,11 @@
     </div>
 
     <!-- Upload SO Table -->
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 shadow-xs overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                    <tr class="bg-slate-50/80 dark:bg-slate-800/60 border-b border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400">
                         <th class="py-3.5 px-4 font-semibold w-12 text-center">S.N.</th>
                         
                         <th class="py-3.5 px-4 font-semibold">
@@ -93,8 +93,8 @@
                             </a>
                         </th>
 
-                        <th class="py-3.5 px-4 font-semibold">
-                            <a href="{{ route('admin.upload-sos.index', array_merge(request()->query(), ['sort' => 'status', 'dir' => request('sort') === 'status' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
+                        <th class="py-3.5 px-4 font-semibold text-center">
+                            <a href="{{ route('admin.upload-sos.index', array_merge(request()->query(), ['sort' => 'status', 'dir' => request('sort') === 'status' && request('dir') === 'asc' ? 'desc' : 'asc'])) }}" class="inline-flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400">
                                 Status
                                 @if(request('sort') === 'status')
                                     <span>{{ request('dir') === 'asc' ? '↑' : '↓' }}</span>
@@ -102,37 +102,36 @@
                             </a>
                         </th>
 
-                        <th class="py-3.5 px-4 font-semibold text-center">SO Image</th>
-                        <th class="py-3.5 px-4 font-semibold text-center">Slip Image</th>
+                        <th class="py-3.5 px-4 font-semibold text-center">Receipts</th>
                         <th class="py-3.5 px-4 font-semibold">Remarks</th>
                         <th class="py-3.5 px-4 font-semibold text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/70">
                     @forelse ($uploadSos as $index => $item)
-                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
-                            <td class="py-3.5 px-4 text-center font-mono text-slate-400">
+                        <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/30 transition">
+                            <td class="py-3.5 px-4 text-center font-mono text-slate-400 text-xs">
                                 {{ $uploadSos->firstItem() + $index }}
                             </td>
 
                             <td class="py-3.5 px-4">
-                                <a href="{{ route('admin.upload-sos.show', $item) }}" class="font-mono font-bold text-indigo-600 dark:text-indigo-400 hover:underline text-sm block">
+                                <a href="{{ route('admin.upload-sos.show', $item) }}" class="font-mono font-bold text-indigo-600 dark:text-indigo-400 hover:underline text-xs block">
                                     {{ $item->so_number }}
                                 </a>
                                 <span class="text-[10px] text-slate-400">{{ $item->created_at->format('M d, Y') }}</span>
                             </td>
 
-                            <td class="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-semibold">
-                                <span class="px-2 py-0.5 rounded-lg bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800/60 font-medium">
+                            <td class="py-3.5 px-4">
+                                <span class="px-2.5 py-1 rounded-lg bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-200/60 dark:border-violet-800/60 font-semibold text-[11px]">
                                     {{ $item->so_from ?: '—' }}
                                 </span>
                             </td>
 
-                            <td class="py-3.5 px-4 font-semibold text-slate-900 dark:text-slate-100">
+                            <td class="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-200">
                                 {{ $item->billed_to }}
                             </td>
 
-                            <td class="py-3.5 px-4">
+                            <td class="py-3.5 px-4 text-center">
                                 @php
                                     $statusStyle = match($item->status) {
                                         'paid' => 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
@@ -142,32 +141,30 @@
                                         default => 'bg-slate-50 text-slate-700 border-slate-200'
                                     };
                                 @endphp
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border {{ $statusStyle }}">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border {{ $statusStyle }}">
                                     {{ $item->status }}
                                 </span>
                             </td>
 
                             <td class="py-3.5 px-4 text-center">
-                                @if ($item->so_image_url)
-                                    <button @click="modalImageUrl = '{{ $item->so_image_url }}'; modalTitle = 'Sales Order Image ({{ $item->so_number }})'; imageModalOpen = true" class="group relative inline-block">
-                                        <img src="{{ $item->so_image_url }}" alt="SO Image" class="w-9 h-9 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-105 transition">
-                                    </button>
-                                @else
-                                    <span class="text-slate-400 text-[11px] italic">No file</span>
-                                @endif
+                                <div class="flex items-center justify-center gap-1.5">
+                                    @if ($item->so_image_url)
+                                        <button @click="modalImageUrl = '{{ $item->so_image_url }}'; modalTitle = 'Sales Order Image ({{ $item->so_number }})'; imageModalOpen = true" class="group relative" title="View SO Image">
+                                            <img src="{{ $item->so_image_url }}" alt="SO" class="w-8 h-8 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:scale-110 transition">
+                                        </button>
+                                    @endif
+                                    @if ($item->slip_image_url)
+                                        <button @click="modalImageUrl = '{{ $item->slip_image_url }}'; modalTitle = 'Slip Proof ({{ $item->so_number }})'; imageModalOpen = true" class="group relative" title="View Slip Proof">
+                                            <img src="{{ $item->slip_image_url }}" alt="Slip" class="w-8 h-8 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-2xs group-hover:scale-110 transition">
+                                        </button>
+                                    @endif
+                                    @if (!$item->so_image_url && !$item->slip_image_url)
+                                        <span class="text-slate-400 text-[10px] italic">—</span>
+                                    @endif
+                                </div>
                             </td>
 
-                            <td class="py-3.5 px-4 text-center">
-                                @if ($item->slip_image_url)
-                                    <button @click="modalImageUrl = '{{ $item->slip_image_url }}'; modalTitle = 'Slip / Proof ({{ $item->so_number }})'; imageModalOpen = true" class="group relative inline-block">
-                                        <img src="{{ $item->slip_image_url }}" alt="Slip Image" class="w-9 h-9 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm group-hover:scale-105 transition">
-                                    </button>
-                                @else
-                                    <span class="text-slate-400 text-[11px] italic">No file</span>
-                                @endif
-                            </td>
-
-                            <td class="py-3.5 px-4 text-slate-500 dark:text-slate-400 max-w-xs truncate">
+                            <td class="py-3.5 px-4 text-slate-500 dark:text-slate-400 max-w-xs truncate text-[11px]">
                                 {{ $item->remarks ?: '—' }}
                             </td>
 
@@ -200,8 +197,8 @@
                             <td colspan="8" class="py-12 text-center text-slate-400">
                                 <div class="max-w-xs mx-auto space-y-2">
                                     <svg class="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <p class="font-medium text-slate-600 dark:text-slate-300">No Sales Orders found</p>
-                                    <p class="text-xs text-slate-400">Upload your first Sales Order image or adjust search filters.</p>
+                                    <p class="font-bold text-slate-700 dark:text-slate-300">No Sales Orders found</p>
+                                    <p class="text-xs text-slate-400">Upload your first Sales Order image or adjust your search filters.</p>
                                 </div>
                             </td>
                         </tr>
@@ -211,7 +208,7 @@
         </div>
 
         @if ($uploadSos->hasPages())
-            <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+            <div class="p-4 border-t border-slate-200/80 dark:border-slate-800">
                 {{ $uploadSos->links() }}
             </div>
         @endif
@@ -219,13 +216,13 @@
 
     <!-- Image Lightbox Modal -->
     <div x-show="imageModalOpen" x-cloak class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div @click.away="imageModalOpen = false" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full p-6 shadow-2xl space-y-4">
+        <div @click.away="imageModalOpen = false" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full p-6 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <h3 class="font-bold text-slate-900 dark:text-white text-base" x-text="modalTitle"></h3>
+                <h3 class="font-bold text-slate-900 dark:text-white text-sm" x-text="modalTitle"></h3>
                 <button @click="imageModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm">✕</button>
             </div>
-            <div class="flex justify-center p-2 bg-slate-950/20 rounded-xl">
-                <img :src="modalImageUrl" alt="SO Full Image" class="max-h-[70vh] object-contain rounded-lg">
+            <div class="flex justify-center p-2 bg-slate-950/40 rounded-2xl">
+                <img :src="modalImageUrl" alt="SO Full Image" class="max-h-[70vh] object-contain rounded-xl">
             </div>
             <div class="flex justify-end gap-2 pt-2">
                 <a :href="modalImageUrl" target="_blank" download class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500">Download Image</a>

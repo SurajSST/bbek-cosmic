@@ -2,13 +2,23 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Sign In — {{ config('app.name', 'Cosmic Bill') }}</title>
+
+    <!-- PWA Meta Tags & Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#090d16">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cosmic Bill">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -17,25 +27,26 @@
         h1, h2, h3, .font-heading { font-family: 'Outfit', sans-serif; }
     </style>
 </head>
-<body class="h-full bg-slate-950 text-slate-100 flex items-center justify-center p-4 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+<body class="h-full bg-[#090d16] text-slate-100 flex items-center justify-center p-4 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
     
-    <!-- Background Gradient Glows -->
-    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-violet-600/30 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Background Radiant Glows -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-violet-600/25 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="w-full max-w-md relative z-10 space-y-6">
 
         <!-- Logo Header -->
         <div class="text-center space-y-2">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 text-white font-extrabold text-2xl shadow-xl shadow-indigo-500/30 mb-2">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 text-white font-black text-2xl shadow-xl shadow-indigo-500/30 mb-2 hover:scale-105 transition-transform duration-200">
                 C
             </div>
-            <h1 class="text-3xl font-extrabold text-white tracking-tight font-heading">Cosmic Bill</h1>
+            <h1 class="text-3xl font-black text-white tracking-tight font-heading">Cosmic Bill</h1>
             <p class="text-xs text-slate-400 font-medium">Enterprise SaaS Billing & Access Control Engine</p>
         </div>
 
-        <!-- Login Card -->
-        <div class="bg-slate-900/80 backdrop-blur-2xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+        <!-- Login Glass Card -->
+        <div class="bg-slate-900/85 backdrop-blur-2xl border border-slate-800/90 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
             
             <div class="border-b border-slate-800/80 pb-4">
                 <h2 class="text-lg font-bold text-white font-heading">Sign in to workspace</h2>
@@ -90,7 +101,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition transform active:scale-[0.99] uppercase tracking-wider">
+                <button type="submit" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition transform active:scale-[0.99] uppercase tracking-wider">
                     Authenticate Account
                 </button>
             </form>
@@ -103,5 +114,14 @@
             </p>
         </div>
     </div>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+    </script>
 </body>
 </html>

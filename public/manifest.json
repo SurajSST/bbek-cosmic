@@ -1,0 +1,63 @@
+{
+    "name": "Cosmic Bill — SaaS Billing & Operations",
+    "short_name": "Cosmic Bill",
+    "description": "Enterprise Billing, Sales Orders & Role-Based Access Control System",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#090d16",
+    "theme_color": "#4f46e5",
+    "lang": "en",
+    "dir": "ltr",
+    "categories": ["business", "finance", "productivity"],
+    "icons": [
+        {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-maskable-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/icons/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Dashboard",
+            "description": "View real-time system stats and overview",
+            "url": "/admin/dashboard",
+            "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "New Sales Order",
+            "short_name": "New SO",
+            "description": "Create a new Sales Order entry",
+            "url": "/admin/sales-orders/create",
+            "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Upload Bill",
+            "short_name": "Upload Bill",
+            "description": "Upload a new bill or receipt snapshot",
+            "url": "/admin/bills/create",
+            "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+        }
+    ]
+}
