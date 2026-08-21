@@ -27,6 +27,11 @@ const form = useForm({
 const soImagePreview = ref(props.uploadSo.so_image ? `/storage/${props.uploadSo.so_image}` : null);
 const slipImagePreview = ref(props.uploadSo.slip_image ? `/storage/${props.uploadSo.slip_image}` : null);
 
+const soCameraInput = ref(null);
+const soGalleryInput = ref(null);
+const slipCameraInput = ref(null);
+const slipGalleryInput = ref(null);
+
 function handleSoImage(e) {
     const file = e.target.files[0];
     if (file) {
@@ -81,7 +86,7 @@ function submit() {
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 font-mono">
                                 SO Slip Number *
                             </label>
                             <input type="text" v-model="form.so_number" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
@@ -89,7 +94,7 @@ function submit() {
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 font-mono">
                                 Total Amount (Rs.)
                             </label>
                             <input type="number" v-model="form.amount" min="0" step="0.01" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
@@ -97,7 +102,7 @@ function submit() {
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 font-mono">
                                 SO From (Origin / Salesperson) *
                             </label>
                             <input type="text" v-model="form.so_from" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
@@ -105,7 +110,7 @@ function submit() {
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 font-mono">
                                 Billed To (Customer Name / Entity) *
                             </label>
                             <input type="text" v-model="form.billed_to" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
@@ -113,14 +118,14 @@ function submit() {
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 font-mono">
                                 Billed From
                             </label>
                             <input type="text" v-model="form.billed_from" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 font-mono">
                                 Status *
                             </label>
                             <select v-model="form.status" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -132,48 +137,80 @@ function submit() {
                         </div>
                     </div>
 
-                    <!-- File Uploads -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2">
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    <!-- Enhanced Image Uploads (Camera + Gallery) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        
+                        <!-- SO Image -->
+                        <div class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 space-y-3">
+                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
                                 Replace SO Document Image
                             </label>
-                            <input type="file" accept="image/*" @change="handleSoImage" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-                            <div v-if="soImagePreview" class="w-28 h-28 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 mt-2">
-                                <img :src="soImagePreview" class="w-full h-full object-cover" />
+
+                            <!-- Hidden inputs -->
+                            <input type="file" ref="soCameraInput" accept="image/*" capture="environment" @change="handleSoImage" class="hidden" />
+                            <input type="file" ref="soGalleryInput" accept="image/*" @change="handleSoImage" class="hidden" />
+
+                            <div v-if="soImagePreview" class="relative w-full h-44 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-900 mb-2">
+                                <img :src="soImagePreview" class="w-full h-full object-contain" alt="SO Preview" />
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" @click="soCameraInput.click()" class="py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                    <span>📸</span> <span>Open Camera</span>
+                                </button>
+                                <button type="button" @click="soGalleryInput.click()" class="py-2 px-3 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                                    <span>📁</span> <span>Photo Library</span>
+                                </button>
+                            </div>
+                            <p v-if="form.errors.so_image" class="text-xs text-rose-500 font-semibold">{{ form.errors.so_image }}</p>
+                        </div>
+
+                        <!-- Delivery Slip -->
+                        <div class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 space-y-3">
+                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
+                                Replace Delivery Slip
+                            </label>
+
+                            <!-- Hidden inputs -->
+                            <input type="file" ref="slipCameraInput" accept="image/*" capture="environment" @change="handleSlipImage" class="hidden" />
+                            <input type="file" ref="slipGalleryInput" accept="image/*" @change="handleSlipImage" class="hidden" />
+
+                            <div v-if="slipImagePreview" class="relative w-full h-44 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-900 mb-2">
+                                <img :src="slipImagePreview" class="w-full h-full object-contain" alt="Slip Preview" />
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" @click="slipCameraInput.click()" class="py-2 px-3 rounded-xl bg-indigo-600/90 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                    <span>📸</span> <span>Open Camera</span>
+                                </button>
+                                <button type="button" @click="slipGalleryInput.click()" class="py-2 px-3 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                                    <span>📁</span> <span>Photo Library</span>
+                                </button>
                             </div>
                         </div>
 
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2">
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                                Replace Delivery Slip (Optional)
-                            </label>
-                            <input type="file" accept="image/*" @change="handleSlipImage" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-                            <div v-if="slipImagePreview" class="w-28 h-28 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 mt-2">
-                                <img :src="slipImagePreview" class="w-full h-full object-cover" />
-                            </div>
-                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 font-mono">
                                 Remarks
                             </label>
-                            <textarea v-model="form.remarks" rows="2" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"></textarea>
+                            <textarea v-model="form.remarks" rows="2" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white"></textarea>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 font-mono">
                                 Description
                             </label>
-                            <textarea v-model="form.description" rows="2" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"></textarea>
+                            <textarea v-model="form.description" rows="2" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white"></textarea>
                         </div>
                     </div>
 
                     <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                        <Link :href="`/admin/upload-sos/${uploadSo.id}`" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold">Cancel</Link>
-                        <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30 transition disabled:opacity-50">
-                            Update SO Slip &rarr;
+                        <Link :href="`/admin/upload-sos/${uploadSo.id}`" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300">Cancel</Link>
+                        <button type="submit" :disabled="form.processing" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30 transition disabled:opacity-50 flex items-center gap-2">
+                            <span v-if="form.processing">Updating SO Slip...</span>
+                            <span v-else>Update SO Slip &rarr;</span>
                         </button>
                     </div>
 
