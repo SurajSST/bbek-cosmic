@@ -16,11 +16,6 @@ function submit() {
         onFinish: () => form.reset('password'),
     });
 }
-
-function fillDemo(email, pass) {
-    form.email = email;
-    form.password = pass;
-}
 </script>
 
 <template>
@@ -41,10 +36,10 @@ function fillDemo(email, pass) {
                         required 
                         autofocus 
                         autocomplete="username"
-                        class="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-900/90 border border-slate-750 text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-inner placeholder-slate-500"
+                        class="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-950/70 border border-slate-750/80 text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-inner placeholder-slate-500"
                         placeholder="name@company.com"
                     />
-                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-indigo-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
                     </svg>
                 </div>
@@ -66,16 +61,16 @@ function fillDemo(email, pass) {
                         v-model="form.password" 
                         required 
                         autocomplete="current-password"
-                        class="w-full pl-10 pr-11 py-3 rounded-2xl bg-slate-900/90 border border-slate-750 text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-inner placeholder-slate-500"
+                        class="w-full pl-10 pr-11 py-3 rounded-2xl bg-slate-950/70 border border-slate-750/80 text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-inner placeholder-slate-500"
                         placeholder="••••••••"
                     />
-                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-indigo-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                     </svg>
                     <button 
                         type="button" 
                         @click="showPassword = !showPassword" 
-                        class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-200 transition" 
+                        class="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-200 transition" 
                         :title="showPassword ? 'Hide password' : 'Show password'"
                     >
                         <svg v-if="!showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
