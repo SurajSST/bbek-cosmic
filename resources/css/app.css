@@ -23,14 +23,25 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
+
+    /* Fix browser input autofill background in dark mode */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus,
+    textarea:-webkit-autofill,
+    select:-webkit-autofill {
+        -webkit-text-fill-color: inherit;
+        -webkit-box-shadow: 0 0 0px 1000px rgba(15, 23, 42, 0.95) inset;
+        transition: background-color 5000s ease-in-out 0s;
+    }
 }
 
 /* Safe Area Inset Utility Classes for Mobile & Standalone PWA */
 .pwa-safe-top {
-    padding-top: env(safe-area-inset-top, 0px);
+    padding-top: max(env(safe-area-inset-top, 0px), 0.5rem);
 }
 .pwa-safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
 }
 .pwa-safe-left {
     padding-left: env(safe-area-inset-left, 0px);
@@ -63,23 +74,23 @@
 
 /* Glassmorphic Utilities */
 .glass-header {
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
 .dark .glass-header {
-    background: rgba(10, 14, 23, 0.88);
+    background: rgba(10, 14, 23, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
 
 .glass-bottom-bar {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
 }
 .dark .glass-bottom-bar {
-    background: rgba(10, 14, 23, 0.92);
+    background: rgba(10, 14, 23, 0.94);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
 }
@@ -103,11 +114,41 @@ table tr {
     -webkit-overflow-scrolling: touch;
 }
 
-/* Micro-animations */
-@keyframes pulseSubtle {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.85; transform: scale(1.02); }
+/* NProgress High-Visibility Styling with Safe-Area Offset */
+#nprogress {
+    pointer-events: none;
 }
-.animate-subtle {
-    animation: pulseSubtle 3s ease-in-out infinite;
+#nprogress .bar {
+    background: linear-gradient(90deg, #4f46e5, #818cf8, #a855f7, #ec4899) !important;
+    position: fixed !important;
+    z-index: 99999 !important;
+    top: max(env(safe-area-inset-top, 0px), 0px) !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 3.5px !important;
+    box-shadow: 0 0 14px rgba(99, 102, 241, 0.95), 0 0 8px rgba(168, 85, 247, 0.8) !important;
+}
+#nprogress .peg {
+    box-shadow: 0 0 15px #6366f1, 0 0 10px #a855f7 !important;
+}
+#nprogress .spinner {
+    position: fixed !important;
+    top: calc(max(env(safe-area-inset-top, 0px), 8px) + 8px) !important;
+    right: 14px !important;
+    z-index: 99999 !important;
+}
+#nprogress .spinner-icon {
+    width: 18px !important;
+    height: 18px !important;
+    box-sizing: border-box !important;
+    border: solid 2.5px transparent !important;
+    border-top-color: #6366f1 !important;
+    border-left-color: #6366f1 !important;
+    border-radius: 50% !important;
+    animation: nprogress-spinner 400ms linear infinite !important;
+}
+
+@keyframes nprogress-spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

@@ -10,7 +10,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 bg-[#070a12] text-slate-100 relative overflow-hidden font-sans select-none">
+    <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 bg-[#070a12] text-slate-100 relative overflow-hidden font-sans select-none pwa-safe-top pwa-safe-bottom">
         
         <!-- Glowing Ambient Lighting Background -->
         <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>

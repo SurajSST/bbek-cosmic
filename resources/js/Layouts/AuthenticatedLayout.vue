@@ -23,6 +23,7 @@ const passwordModalOpen = ref(false);
 const pwaInstallPrompt = ref(null);
 const isOnline = ref(navigator.onLine);
 const showOnlineBanner = ref(false);
+const isPageLoading = ref(false);
 
 // Theme State
 const currentTheme = ref(localStorage.getItem('theme') || 'system');
@@ -93,6 +94,9 @@ function isUrl(...urls) {
 }
 
 // Lifecycle listeners
+let removeStartListener = null;
+let removeFinishListener = null;
+
 const handleBeforeInstallPrompt = (e) => {
     e.preventDefault();
     pwaInstallPrompt.value = e;
@@ -108,22 +112,67 @@ const handleOffline = () => {
     isOnline.value = false;
 };
 
+const handleKeydown = (e) => {
+    if (e.key === 'Escape') {
+        sidebarOpen.value = false;
+        themeMenuOpen.value = false;
+        profileMenuOpen.value = false;
+        quickActionSheetOpen.value = false;
+        passwordModalOpen.value = false;
+    }
+};
+
 onMounted(() => {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+    window.addEventListener('keydown', handleKeydown);
+
+    removeStartListener = router.on('start', () => {
+        isPageLoading.value = true;
+    });
+
+    removeFinishListener = router.on('finish', () => {
+        isPageLoading.value = false;
+        sidebarOpen.value = false; // Auto close drawer on navigation
+    });
 });
 
 onUnmounted(() => {
     window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.removeEventListener('online', handleOnline);
     window.removeEventListener('offline', handleOffline);
+    window.removeEventListener('keydown', handleKeydown);
+    if (removeStartListener) removeStartListener();
+    if (removeFinishListener) removeFinishListener();
 });
 </script>
 
 <template>
     <div class="h-screen flex overflow-hidden bg-slate-50 dark:bg-[#070a12] text-slate-900 dark:text-slate-100 antialiased font-sans">
         
+        <!-- Prominent Glowing Top Loading Bar for SPA Transitions -->
+        <div v-if="isPageLoading" class="fixed top-0 inset-x-0 h-1 z-[100] overflow-hidden pointer-events-none" :style="{ marginTop: 'env(safe-area-inset-top, 0px)' }">
+            <div class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-pulse w-full shadow-lg shadow-indigo-500/50"></div>
+        </div>
+
+        <!-- Mobile Drawer Backdrop Overlay (Closes drawer on outside click) -->
+        <Transition
+            enter-active-class="transition-opacity ease-out duration-300"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition-opacity ease-in duration-200"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div 
+                v-if="sidebarOpen" 
+                @click="sidebarOpen = false" 
+                class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-40 md:hidden"
+                aria-label="Close sidebar backdrop"
+            ></div>
+        </Transition>
+
         <!-- Sidebar Navigation (Desktop + Slide-over Drawer on Mobile) -->
         <aside 
             class="w-64 bg-white dark:bg-[#0a0e17] text-slate-700 dark:text-slate-300 border-r border-slate-200/80 dark:border-slate-800/80 flex flex-col justify-between shrink-0 transition-transform duration-300 z-50 fixed inset-y-0 left-0 md:static md:translate-x-0 shadow-xs"
@@ -131,9 +180,9 @@ onUnmounted(() => {
         >
             <div class="flex flex-col h-full overflow-hidden">
                 
-                <!-- Brand Header / Logo -->
-                <div class="h-16 px-5 flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/70 dark:bg-[#070a10] shrink-0">
-                    <Link href="/admin/dashboard" class="flex items-center gap-3 group">
+                <!-- Brand Header / Logo with Mobile Safe-Area Inset Top padding -->
+                <div class="px-5 pt-[max(env(safe-area-inset-top,0px),0.85rem)] pb-3.5 flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/70 dark:bg-[#070a10] shrink-0">
+                    <Link href="/admin/dashboard" @click="sidebarOpen = false" class="flex items-center gap-3 group">
                         <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 text-white font-black text-lg flex items-center justify-center shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
                             C
                         </div>
@@ -148,7 +197,7 @@ onUnmounted(() => {
                     </Link>
 
                     <!-- Mobile Close Button -->
-                    <button @click="sidebarOpen = false" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <button @click="sidebarOpen = false" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Close Menu">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
@@ -272,8 +321,8 @@ onUnmounted(() => {
 
                 </div>
 
-                <!-- Sidebar Footer Status -->
-                <div class="p-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/70 dark:bg-[#070a10] flex items-center justify-between text-slate-500 dark:text-slate-400 text-[11px] shrink-0">
+                <!-- Footer Status -->
+                <div class="p-3 border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50/50 dark:bg-[#070a10] text-xs flex items-center justify-between text-slate-500 shrink-0 pwa-safe-bottom">
                     <div class="flex items-center gap-2">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -415,13 +464,13 @@ onUnmounted(() => {
                 <div class="grid grid-cols-5 items-center justify-around px-2 py-1.5">
                     
                     <!-- 1. Dashboard -->
-                    <Link href="/admin/dashboard" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/dashboard') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
+                    <Link href="/admin/dashboard" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/dashboard') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
                         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                         <span>Home</span>
                     </Link>
 
                     <!-- 2. Sales Orders -->
-                    <Link v-if="can('sales-orders.view')" href="/admin/sales-orders" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/sales-orders') && !isUrl('/admin/sales-orders/bulk-upload') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
+                    <Link v-if="can('sales-orders.view')" href="/admin/sales-orders" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/sales-orders') && !isUrl('/admin/sales-orders/bulk-upload') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
                         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         <span>Orders</span>
                     </Link>
@@ -435,14 +484,14 @@ onUnmounted(() => {
                     </div>
 
                     <!-- 4. Bills -->
-                    <Link v-if="can('bills.view')" href="/admin/bills" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/bills') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
+                    <Link v-if="can('bills.view')" href="/admin/bills" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/bills') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
                         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         <span>Bills</span>
                     </Link>
                     <div v-else></div>
 
                     <!-- 5. Mobile Drawer Trigger -->
-                    <button type="button" @click="sidebarOpen = true" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                    <button type="button" @click="sidebarOpen = true" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition" :class="sidebarOpen ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''">
                         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         <span>Menu</span>
                     </button>
@@ -450,129 +499,113 @@ onUnmounted(() => {
             </nav>
         </div>
 
-        <!-- Quick Action Sheet Modal -->
-        <div v-show="quickActionSheetOpen" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
-            <div @click.away="quickActionSheetOpen = false" class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 dark:border-slate-800 max-w-sm w-full p-6 shadow-2xl space-y-4 pwa-safe-bottom">
-                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                    <h3 class="font-bold text-slate-900 dark:text-white text-base font-heading">Quick Operations</h3>
-                    <button type="button" @click="quickActionSheetOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm">✕</button>
-                </div>
+        <!-- Quick Actions Bottom Sheet (Mobile & Quick Access) -->
+        <Transition
+            enter-active-class="transition-opacity ease-out duration-200"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition-opacity ease-in duration-150"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div v-if="quickActionSheetOpen" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex flex-col justify-end p-3 sm:p-4" @click.self="quickActionSheetOpen = false">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xl max-w-lg w-full mx-auto space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <h3 class="font-bold text-sm font-heading text-slate-900 dark:text-white">Quick Actions</h3>
+                        <button @click="quickActionSheetOpen = false" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 text-xs">✕</button>
+                    </div>
 
-                <div class="grid grid-cols-1 gap-2.5">
-                    <Link v-if="can('sales-orders.create')" href="/admin/sales-orders/create" @click="quickActionSheetOpen = false" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition">
-                        <span class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm">➕</span>
-                        <div>
-                            <div class="text-xs font-bold text-slate-900 dark:text-white">Create Sales Order</div>
-                            <div class="text-[10px] text-slate-400">Record client order and line items</div>
-                        </div>
-                    </Link>
+                    <div class="grid grid-cols-2 gap-3">
+                        <Link v-if="can('sales-orders.create')" href="/admin/sales-orders/create" @click="quickActionSheetOpen = false" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 border border-slate-200 dark:border-slate-700 transition flex flex-col gap-1">
+                            <span class="text-xl">✨</span>
+                            <span class="font-bold text-xs text-slate-900 dark:text-white">Create SO</span>
+                            <span class="text-[10px] text-slate-400">Add sales order</span>
+                        </Link>
 
-                    <Link v-if="can('bills.create')" href="/admin/bills/create" @click="quickActionSheetOpen = false" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition">
-                        <span class="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-950 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold text-sm">📷</span>
-                        <div>
-                            <div class="text-xs font-bold text-slate-900 dark:text-white">Upload Vendor Bill</div>
-                            <div class="text-[10px] text-slate-400">Snap receipt or attach document</div>
-                        </div>
-                    </Link>
+                        <Link v-if="can('bills.create')" href="/admin/bills/create" @click="quickActionSheetOpen = false" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 border border-slate-200 dark:border-slate-700 transition flex flex-col gap-1">
+                            <span class="text-xl">📷</span>
+                            <span class="font-bold text-xs text-slate-900 dark:text-white">Snap Bill</span>
+                            <span class="text-[10px] text-slate-400">Capture receipt</span>
+                        </Link>
 
-                    <Link v-if="can('upload-sos.create')" href="/admin/upload-sos/create" @click="quickActionSheetOpen = false" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition">
-                        <span class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm">🖼️</span>
-                        <div>
-                            <div class="text-xs font-bold text-slate-900 dark:text-white">Upload SO Image</div>
-                            <div class="text-[10px] text-slate-400">Capture sales order slip image</div>
-                        </div>
-                    </Link>
+                        <Link v-if="can('upload-sos.create')" href="/admin/upload-sos/create" @click="quickActionSheetOpen = false" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/50 border border-slate-200 dark:border-slate-700 transition flex flex-col gap-1">
+                            <span class="text-xl">🖼️</span>
+                            <span class="font-bold text-xs text-slate-900 dark:text-white">Upload SO</span>
+                            <span class="text-[10px] text-slate-400">Upload paper slip</span>
+                        </Link>
 
-                    <Link v-if="can('sales-orders.bulk-upload') || can('sales-orders.create')" href="/admin/sales-orders/bulk-upload" @click="quickActionSheetOpen = false" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition">
-                        <span class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">📊</span>
-                        <div>
-                            <div class="text-xs font-bold text-slate-900 dark:text-white">Bulk CSV Upload</div>
-                            <div class="text-[10px] text-slate-400">Import spreadsheet in bulk</div>
-                        </div>
-                    </Link>
+                        <Link v-if="can('sales-orders.bulk-upload')" href="/admin/sales-orders/bulk-upload" @click="quickActionSheetOpen = false" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-violet-50 dark:hover:bg-violet-950/50 border border-slate-200 dark:border-slate-700 transition flex flex-col gap-1">
+                            <span class="text-xl">📊</span>
+                            <span class="font-bold text-xs text-slate-900 dark:text-white">Bulk Import</span>
+                            <span class="text-[10px] text-slate-400">Import CSV/Excel</span>
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Transition>
 
         <!-- Change Password Modal -->
-        <div v-show="passwordModalOpen" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4">
-            <div @click.away="passwordModalOpen = false" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 shadow-2xl space-y-5">
-                
-                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm">
-                            🔑
-                        </div>
-                        <div>
+        <Transition
+            enter-active-class="transition-opacity ease-out duration-200"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition-opacity ease-in duration-150"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div v-if="passwordModalOpen" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" @click.self="passwordModalOpen = false">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 shadow-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm">🔒</span>
                             <h3 class="font-bold text-slate-900 dark:text-white text-base font-heading">Change Password</h3>
-                            <p class="text-xs text-slate-400">Update your account login credentials</p>
                         </div>
+                        <button @click="passwordModalOpen = false" class="text-slate-400 hover:text-slate-600 text-xs">✕</button>
                     </div>
-                    <button type="button" @click="passwordModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm p-1">✕</button>
+
+                    <form @submit.prevent="submitPasswordChange" class="space-y-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Current Password *</label>
+                            <div class="relative">
+                                <input :type="showCurrentPass ? 'text' : 'password'" v-model="passwordForm.current_password" required class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold" />
+                                <button type="button" @click="showCurrentPass = !showCurrentPass" class="absolute right-3 top-2.5 text-slate-400 text-xs">
+                                    {{ showCurrentPass ? '🙈' : '👁️' }}
+                                </button>
+                            </div>
+                            <p v-if="passwordForm.errors.current_password" class="text-xs text-rose-500 mt-1">{{ passwordForm.errors.current_password }}</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">New Password (Min 8 chars) *</label>
+                            <div class="relative">
+                                <input :type="showNewPass ? 'text' : 'password'" v-model="passwordForm.password" required minlength="8" class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold" />
+                                <button type="button" @click="showNewPass = !showNewPass" class="absolute right-3 top-2.5 text-slate-400 text-xs">
+                                    {{ showNewPass ? '🙈' : '👁️' }}
+                                </button>
+                            </div>
+                            <p v-if="passwordForm.errors.password" class="text-xs text-rose-500 mt-1">{{ passwordForm.errors.password }}</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Confirm New Password *</label>
+                            <div class="relative">
+                                <input :type="showConfirmPass ? 'text' : 'password'" v-model="passwordForm.password_confirmation" required minlength="8" class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold" />
+                                <button type="button" @click="showConfirmPass = !showConfirmPass" class="absolute right-3 top-2.5 text-slate-400 text-xs">
+                                    {{ showConfirmPass ? '🙈' : '👁️' }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                            <button type="button" @click="passwordModalOpen = false" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold">Cancel</button>
+                            <button type="submit" :disabled="passwordForm.processing" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition disabled:opacity-50">
+                                Update Password
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <div v-if="errors.current_password || errors.password" class="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs space-y-1">
-                    <p v-if="errors.current_password" class="font-medium">• {{ errors.current_password }}</p>
-                    <p v-if="errors.password" class="font-medium">• {{ errors.password }}</p>
-                </div>
-
-                <form @submit.prevent="submitPasswordChange" class="space-y-4">
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                            Current Password
-                        </label>
-                        <div class="relative">
-                            <input :type="showCurrentPass ? 'text' : 'password'" v-model="passwordForm.current_password" required
-                                class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                                placeholder="Enter existing password">
-                            <button type="button" @click="showCurrentPass = !showCurrentPass" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
-                                <span v-if="!showCurrentPass">👁️</span>
-                                <span v-else>🙈</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                            New Password
-                        </label>
-                        <div class="relative">
-                            <input :type="showNewPass ? 'text' : 'password'" v-model="passwordForm.password" required minlength="8"
-                                class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                                placeholder="Min. 8 characters">
-                            <button type="button" @click="showNewPass = !showNewPass" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
-                                <span v-if="!showNewPass">👁️</span>
-                                <span v-else>🙈</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                            Confirm New Password
-                        </label>
-                        <div class="relative">
-                            <input :type="showConfirmPass ? 'text' : 'password'" v-model="passwordForm.password_confirmation" required minlength="8"
-                                class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                                placeholder="Re-type new password">
-                            <button type="button" @click="showConfirmPass = !showConfirmPass" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold">
-                                <span v-if="!showConfirmPass">👁️</span>
-                                <span v-else>🙈</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2.5">
-                        <button type="button" @click="passwordModalOpen = false" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition">
-                            Cancel
-                        </button>
-                        <button type="submit" :disabled="passwordForm.processing" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/25 transition disabled:opacity-50">
-                            Update Password
-                        </button>
-                    </div>
-                </form>
             </div>
-        </div>
+        </Transition>
 
     </div>
 </template>
