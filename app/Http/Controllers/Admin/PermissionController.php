@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -26,7 +27,7 @@ class PermissionController extends Controller
     /**
      * Display a listing of permissions grouped by module with search and module filtering.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $search = $request->query('search');
         $activeModule = $request->query('module', 'all');
@@ -58,25 +59,16 @@ class PermissionController extends Controller
         ksort($groupedPermissions);
         ksort($modulesList);
 
-        // Dynamically extract all active modules for the new permission dropdown
-        $availableModules = Permission::all()
-            ->map(function ($p) {
-                $parts = explode('.', $p->name);
-                return count($parts) > 1 ? strtolower($parts[0]) : 'general';
-            })
-            ->merge(['dashboard', 'users', 'roles', 'permissions', 'sales-orders', 'bills', 'upload-sos'])
-            ->unique()
-            ->sort()
-            ->values()
-            ->toArray();
-
-        return view('admin.permissions.index', compact(
-            'groupedPermissions',
-            'modulesList',
-            'search',
-            'activeModule',
-            'availableModules'
-        ));
+        return Inertia::render('Admin/Permissions/Index', [
+            'groupedPermissions' => $groupedPermissions,
+            'modulesList' => $modulesList,
+            'protectedPermissions' => $this->protectedPermissions,
+            'totalCount' => $allPermissions->count(),
+            'filters' => [
+                'search' => $search,
+                'module' => $activeModule,
+            ],
+        ]);
     }
 
     /**
@@ -84,16 +76,22 @@ class PermissionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'module' => ['required', 'string', 'max:50', 'alpha_dash'],
-            'action' => ['required', 'string', 'max:50', 'alpha_dash'],
-        ]);
-
-        $permissionName = strtolower($validated['module']) . '.' . strtolower($validated['action']);
+        if ($request->filled('name')) {
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:100', 'unique:permissions,name'],
+            ]);
+            $permissionName = strtolower(trim($validated['name']));
+        } else {
+            $validated = $request->validate([
+                'module' => ['required', 'string', 'max:50', 'alpha_dash'],
+                'action' => ['required', 'string', 'max:50', 'alpha_dash'],
+            ]);
+            $permissionName = strtolower($validated['module']) . '.' . strtolower($validated['action']);
+        }
 
         if (Permission::where('name', $permissionName)->where('guard_name', 'web')->exists()) {
             return back()->withInput()->withErrors([
-                'action' => "Permission '{$permissionName}' already exists.",
+                'name' => "Permission '{$permissionName}' already exists.",
             ]);
         }
 

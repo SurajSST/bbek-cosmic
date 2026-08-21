@@ -18,6 +18,15 @@ Route::get('/', function () {
     return Auth::check() ? redirect(Auth::user()->getHomeRoute()) : redirect()->route('login');
 });
 
+// PWA Offline Fallback Route
+Route::get('/offline', function () {
+    return response()->file(public_path('offline.html'));
+})->name('offline');
+
+Route::get('/offline.html', function () {
+    return response()->file(public_path('offline.html'));
+});
+
 // Guest Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

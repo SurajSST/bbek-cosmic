@@ -12,14 +12,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SalesOrderController extends Controller
 {
     /**
      * Display a listing of sales orders with search, sorting, and pagination.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $search = $request->query('search');
         $status = $request->query('status');
@@ -35,21 +36,23 @@ class SalesOrderController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.sales_orders.index', compact(
-            'salesOrders',
-            'search',
-            'status',
-            'sortBy',
-            'sortDir'
-        ));
+        return Inertia::render('Admin/SalesOrders/Index', [
+            'salesOrders' => $salesOrders,
+            'filters' => [
+                'search' => $search,
+                'status' => $status,
+                'sort' => $sortBy,
+                'dir' => $sortDir,
+            ],
+        ]);
     }
 
     /**
      * Show the form for creating a new sales order.
      */
-    public function create(): View
+    public function create(): Response
     {
-        return view('admin.sales_orders.create');
+        return Inertia::render('Admin/SalesOrders/Create');
     }
 
     /**
@@ -128,21 +131,25 @@ class SalesOrderController extends Controller
     /**
      * Display the specified sales order details.
      */
-    public function show(SalesOrder $salesOrder): View
+    public function show(SalesOrder $salesOrder): Response
     {
         $salesOrder->load(['items', 'creator']);
 
-        return view('admin.sales_orders.show', compact('salesOrder'));
+        return Inertia::render('Admin/SalesOrders/Show', [
+            'salesOrder' => $salesOrder,
+        ]);
     }
 
     /**
      * Show the form for editing the specified sales order.
      */
-    public function edit(SalesOrder $salesOrder): View
+    public function edit(SalesOrder $salesOrder): Response
     {
         $salesOrder->load('items');
 
-        return view('admin.sales_orders.edit', compact('salesOrder'));
+        return Inertia::render('Admin/SalesOrders/Edit', [
+            'salesOrder' => $salesOrder,
+        ]);
     }
 
     /**
@@ -301,9 +308,9 @@ class SalesOrderController extends Controller
     /**
      * Show the bulk upload form for Sales Orders.
      */
-    public function bulkUploadForm(): View
+    public function bulkUploadForm(): Response
     {
-        return view('admin.sales_orders.bulk_upload');
+        return Inertia::render('Admin/SalesOrders/BulkUpload');
     }
 
     /**

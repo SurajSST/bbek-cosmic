@@ -10,7 +10,8 @@ use App\Models\SalesOrderItem;
 use App\Models\UploadSo;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -19,15 +20,15 @@ class DashboardController extends Controller
     /**
      * Display the admin dashboard with real system metrics and operational data.
      */
-    public function index(): View
+    public function index(): Response
     {
         // Cache high-level counts for 30 seconds to make page loads instant
         $stats = Cache::remember('admin_dashboard_metrics', 30, function () {
             $totalSalesOrders = SalesOrder::count();
             $totalRevenue = SalesOrderItem::sum('total_price') ?? 0;
             $pendingOrders = SalesOrder::where('billed_status', 'pending')->count();
-            $paidOrders = SalesOrder::where('billed_status', 'paid')->count();
-            $billedOrders = SalesOrder::where('billed_status', 'billed')->count();
+            $approvedOrders = SalesOrder::where('billed_status', 'approved')->count();
+            $rejectedOrders = SalesOrder::where('billed_status', 'rejected')->count();
 
             $totalBills = Bill::count();
             $totalUploadSos = UploadSo::count();
@@ -38,13 +39,13 @@ class DashboardController extends Controller
             $totalPermissions = Permission::count();
 
             return [
-                'total_sales_orders' => $totalSalesOrders,
-                'total_revenue' => $totalRevenue,
+                'total_orders' => $totalSalesOrders,
+                'revenue' => $totalRevenue,
                 'pending_orders' => $pendingOrders,
-                'paid_orders' => $paidOrders,
-                'billed_orders' => $billedOrders,
+                'approved_orders' => $approvedOrders,
+                'rejected_orders' => $rejectedOrders,
                 'total_bills' => $totalBills,
-                'total_upload_sos' => $totalUploadSos,
+                'total_uploaded_sos' => $totalUploadSos,
                 'total_users' => $totalUsers,
                 'active_users' => $activeUsers,
                 'total_roles' => $totalRoles,
@@ -64,6 +65,10 @@ class DashboardController extends Controller
             ->take(6)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentOrders', 'recentActivities'));
+        return Inertia::render('Admin/Dashboard', [
+            'stats' => $stats,
+            'recent_orders' => $recentOrders,
+            'recent_activities' => $recentActivities,
+        ]);
     }
 }

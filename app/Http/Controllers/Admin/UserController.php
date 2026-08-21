@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -19,7 +20,7 @@ class UserController extends Controller
     /**
      * Display a paginated listing of users with search and filtering.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $search = $request->query('search');
         $status = $request->query('status');
@@ -35,17 +36,27 @@ class UserController extends Controller
 
         $roles = Role::pluck('name', 'name');
 
-        return view('admin.users.index', compact('users', 'roles', 'search', 'status', 'role'));
+        return Inertia::render('Admin/Users/Index', [
+            'users' => $users,
+            'roles' => $roles,
+            'filters' => [
+                'search' => $search,
+                'status' => $status,
+                'role' => $role,
+            ],
+        ]);
     }
 
     /**
      * Show the form for creating a new user.
      */
-    public function create(): View
+    public function create(): Response
     {
         $roles = Role::all();
 
-        return view('admin.users.create', compact('roles'));
+        return Inertia::render('Admin/Users/Create', [
+            'roles' => $roles,
+        ]);
     }
 
     /**
@@ -82,13 +93,17 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified user.
      */
-    public function edit(User $user): View
+    public function edit(User $user): Response
     {
         $user->load('roles');
         $roles = Role::all();
         $userRoleNames = $user->roles->pluck('name')->toArray();
 
-        return view('admin.users.edit', compact('user', 'roles', 'userRoleNames'));
+        return Inertia::render('Admin/Users/Edit', [
+            'user' => $user,
+            'roles' => $roles,
+            'userRoles' => $userRoleNames,
+        ]);
     }
 
     /**

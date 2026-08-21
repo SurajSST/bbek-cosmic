@@ -33,7 +33,6 @@ class ProfileController extends Controller
 
         // Log the password change activity
         ActivityLog::record(
-            $user,
             'password_changed',
             "User {$user->name} updated their account security password.",
             $user

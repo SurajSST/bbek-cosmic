@@ -11,14 +11,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UploadSoController extends Controller
 {
     /**
      * Display a listing of Upload SOs with search, sorting, and pagination.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $search = $request->query('search');
         $status = $request->query('status');
@@ -34,21 +35,23 @@ class UploadSoController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.upload_sos.index', compact(
-            'uploadSos',
-            'search',
-            'status',
-            'sortBy',
-            'sortDir'
-        ));
+        return Inertia::render('Admin/UploadSos/Index', [
+            'uploadSos' => $uploadSos,
+            'filters' => [
+                'search' => $search,
+                'status' => $status,
+                'sort' => $sortBy,
+                'dir' => $sortDir,
+            ],
+        ]);
     }
 
     /**
      * Show the form for uploading/creating a new Upload SO.
      */
-    public function create(): View
+    public function create(): Response
     {
-        return view('admin.upload_sos.create');
+        return Inertia::render('Admin/UploadSos/Create');
     }
 
     /**
@@ -101,19 +104,23 @@ class UploadSoController extends Controller
     /**
      * Display the specified Upload SO details.
      */
-    public function show(UploadSo $uploadSo): View
+    public function show(UploadSo $uploadSo): Response
     {
         $uploadSo->load('creator');
 
-        return view('admin.upload_sos.show', compact('uploadSo'));
+        return Inertia::render('Admin/UploadSos/Show', [
+            'uploadSo' => $uploadSo,
+        ]);
     }
 
     /**
      * Show the form for editing the specified Upload SO.
      */
-    public function edit(UploadSo $uploadSo): View
+    public function edit(UploadSo $uploadSo): Response
     {
-        return view('admin.upload_sos.edit', compact('uploadSo'));
+        return Inertia::render('Admin/UploadSos/Edit', [
+            'uploadSo' => $uploadSo,
+        ]);
     }
 
     /**

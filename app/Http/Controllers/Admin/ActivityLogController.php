@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ActivityLogController extends Controller
 {
     /**
      * Display a listing of system activity logs.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $search = $request->query('search');
         $action = $request->query('action');
@@ -37,13 +38,15 @@ class ActivityLogController extends Controller
 
         $distinctActions = ActivityLog::distinct()->pluck('action')->filter()->values();
 
-        return view('admin.activity_logs.index', compact(
-            'activityLogs',
-            'search',
-            'action',
-            'distinctActions',
-            'sortBy',
-            'sortDir'
-        ));
+        return Inertia::render('Admin/ActivityLogs/Index', [
+            'activityLogs' => $activityLogs,
+            'distinctActions' => $distinctActions,
+            'filters' => [
+                'search' => $search,
+                'action' => $action,
+                'sort' => $sortBy,
+                'dir' => $sortDir,
+            ],
+        ]);
     }
 }

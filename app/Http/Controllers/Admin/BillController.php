@@ -11,14 +11,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class BillController extends Controller
 {
     /**
      * Display a listing of bills with search, sorting, and pagination.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $search = $request->query('search');
         $status = $request->query('status');
@@ -34,21 +35,23 @@ class BillController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.bills.index', compact(
-            'bills',
-            'search',
-            'status',
-            'sortBy',
-            'sortDir'
-        ));
+        return Inertia::render('Admin/Bills/Index', [
+            'bills' => $bills,
+            'filters' => [
+                'search' => $search,
+                'status' => $status,
+                'sort' => $sortBy,
+                'dir' => $sortDir,
+            ],
+        ]);
     }
 
     /**
      * Show the form for uploading/creating a new bill.
      */
-    public function create(): View
+    public function create(): Response
     {
-        return view('admin.bills.create');
+        return Inertia::render('Admin/Bills/Create');
     }
 
     /**
@@ -99,19 +102,23 @@ class BillController extends Controller
     /**
      * Display the specified bill.
      */
-    public function show(Bill $bill): View
+    public function show(Bill $bill): Response
     {
         $bill->load('creator');
 
-        return view('admin.bills.show', compact('bill'));
+        return Inertia::render('Admin/Bills/Show', [
+            'bill' => $bill,
+        ]);
     }
 
     /**
      * Show the form for editing the specified bill.
      */
-    public function edit(Bill $bill): View
+    public function edit(Bill $bill): Response
     {
-        return view('admin.bills.edit', compact('bill'));
+        return Inertia::render('Admin/Bills/Edit', [
+            'bill' => $bill,
+        ]);
     }
 
     /**

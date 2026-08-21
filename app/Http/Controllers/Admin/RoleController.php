@@ -7,7 +7,8 @@ use App\Models\ActivityLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -17,7 +18,7 @@ class RoleController extends Controller
     /**
      * Display a listing of roles with permission and user counts.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $search = $request->query('search');
 
@@ -30,17 +31,25 @@ class RoleController extends Controller
 
         $totalPermissionsCount = Permission::count();
 
-        return view('admin.roles.index', compact('roles', 'search', 'totalPermissionsCount'));
+        return Inertia::render('Admin/Roles/Index', [
+            'roles' => $roles,
+            'totalPermissionsCount' => $totalPermissionsCount,
+            'filters' => [
+                'search' => $search,
+            ],
+        ]);
     }
 
     /**
      * Show the form for creating a new role.
      */
-    public function create(): View
+    public function create(): Response
     {
         $groupedPermissions = $this->getGroupedPermissions();
 
-        return view('admin.roles.create', compact('groupedPermissions'));
+        return Inertia::render('Admin/Roles/Create', [
+            'groupedPermissions' => $groupedPermissions,
+        ]);
     }
 
     /**
@@ -75,13 +84,17 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified role.
      */
-    public function edit(Role $role): View
+    public function edit(Role $role): Response
     {
         $role->load('permissions');
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $groupedPermissions = $this->getGroupedPermissions();
 
-        return view('admin.roles.edit', compact('role', 'groupedPermissions', 'rolePermissions'));
+        return Inertia::render('Admin/Roles/Edit', [
+            'role' => $role,
+            'groupedPermissions' => $groupedPermissions,
+            'rolePermissions' => $rolePermissions,
+        ]);
     }
 
     /**
