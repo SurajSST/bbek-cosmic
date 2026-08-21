@@ -10,17 +10,39 @@
 
     * {
         border-color: var(--color-slate-200, #e2e8f0);
+        -webkit-tap-highlight-color: transparent;
     }
 
     .dark * {
         border-color: var(--color-slate-800, #1e293b);
     }
+
+    html, body {
+        overscroll-behavior-y: none;
+        touch-action: manipulation;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Safe Area Inset Utility Classes for Mobile & Standalone PWA */
+.pwa-safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+}
+.pwa-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pwa-safe-left {
+    padding-left: env(safe-area-inset-left, 0px);
+}
+.pwa-safe-right {
+    padding-right: env(safe-area-inset-right, 0px);
 }
 
 /* Custom Scrollbar - Slim & Modern */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 ::-webkit-scrollbar-track {
     background: transparent;
@@ -41,14 +63,25 @@
 
 /* Glassmorphic Utilities */
 .glass-header {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 .dark .glass-header {
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(10, 14, 23, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-bottom-bar {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+.dark .glass-bottom-bar {
+    background: rgba(10, 14, 23, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 .glass-card {
@@ -56,13 +89,18 @@
     border: 1px solid rgba(226, 232, 240, 0.8);
 }
 .dark .glass-card {
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(12, 18, 30, 0.75);
     border: 1px solid rgba(30, 41, 59, 0.8);
 }
 
 /* Smooth Table & Transitions */
 table tr {
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth Touch Scrolling */
+.touch-scroll {
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Micro-animations */

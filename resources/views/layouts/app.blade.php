@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Cosmic Bill') }} — SaaS Enterprise Billing</title>
@@ -48,16 +48,19 @@
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full bg-slate-50 text-slate-900 dark:bg-[#070a12] dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-150 overflow-hidden">
+<body class="h-full bg-slate-50 text-slate-900 dark:bg-[#070a12] dark:text-slate-100 antialiased selection:bg-indigo-500 selection:text-white transition-colors duration-150 overflow-hidden select-none">
     <div x-data="{ 
         sidebarOpen: false, 
         pwaInstallPrompt: null,
+        isOnline: navigator.onLine,
+        showOnlineBanner: false,
         theme: localStorage.getItem('theme') || 'system',
         isDarkActive: document.documentElement.classList.contains('dark'),
         passwordModalOpen: {{ $errors->has('current_password') || $errors->has('password') ? 'true' : 'false' }},
         showCurrentPass: false,
         showNewPass: false,
         showConfirmPass: false,
+        quickActionSheetOpen: false,
         init() {
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
@@ -66,6 +69,14 @@
             window.addEventListener('theme-changed', (e) => {
                 this.theme = e.detail.theme;
                 this.isDarkActive = document.documentElement.classList.contains('dark');
+            });
+            window.addEventListener('online', () => {
+                this.isOnline = true;
+                this.showOnlineBanner = true;
+                setTimeout(() => this.showOnlineBanner = false, 4000);
+            });
+            window.addEventListener('offline', () => {
+                this.isOnline = false;
             });
         },
         installPwa() {
@@ -92,22 +103,27 @@
         }
     }" class="h-screen flex overflow-hidden">
         
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation (Desktop & Mobile Slide-Over) -->
         @include('layouts.navigation')
 
         <!-- Main Content Column -->
         <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-slate-50 dark:bg-[#070a12]">
             
-            <!-- Sticky Top Header Navbar -->
-            <header class="sticky top-0 z-30 bg-white/90 dark:bg-[#0a0e17]/90 backdrop-blur-xl border-b border-slate-200/70 dark:border-slate-800/80 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between shadow-2xs shrink-0">
+            <!-- Sticky Top Header Navbar (Safe Area Inset Top) -->
+            <header class="sticky top-0 z-30 glass-header border-b border-slate-200/70 dark:border-slate-800/80 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between shadow-2xs shrink-0 pwa-safe-top">
                 <div class="flex items-center gap-3">
-                    <button @click="sidebarOpen = !sidebarOpen" class="md:hidden p-2 rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none transition">
+                    <button @click="sidebarOpen = !sidebarOpen" class="hidden sm:inline-flex md:hidden p-2 rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none transition" title="Toggle Menu">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
 
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-[10px] font-bold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-md border border-indigo-200/50 dark:border-indigo-800/50">Cosmic Portal</span>
+                            
+                            <!-- Offline Status Mini Indicator -->
+                            <span x-show="!isOnline" x-cloak class="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold animate-pulse">
+                                ⚡ Offline Mode
+                            </span>
                         </div>
                         <h1 class="text-base sm:text-lg font-bold font-heading text-slate-900 dark:text-white leading-tight mt-0.5">
                             @yield('header', 'Dashboard')
@@ -115,11 +131,11 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2.5 sm:gap-3.5">
+                <div class="flex items-center gap-2 sm:gap-3.5">
                     
-                    <!-- PWA Install Button (Dynamic) -->
+                    <!-- PWA Desktop Install Button (Dynamic) -->
                     <template x-if="pwaInstallPrompt">
-                        <button @click="installPwa()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-bold transition hover:scale-105 active:scale-95 shadow-sm">
+                        <button @click="installPwa()" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs font-bold transition hover:scale-105 active:scale-95 shadow-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             <span>Install App</span>
                         </button>
@@ -206,8 +222,8 @@
                 </div>
             </header>
 
-            <!-- Scrollable Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-7 space-y-6">
+            <!-- Scrollable Content Area (With Touch Momentum and Safe Bottom Padding) -->
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-7 space-y-6 touch-scroll pb-24 md:pb-8">
                 <!-- Notifications / Flash Banners -->
                 @if (session('success'))
                     <div x-data="{ show: true }" x-show="show" class="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-200 flex items-center justify-between shadow-xs">
@@ -231,6 +247,137 @@
 
                 @yield('content')
             </main>
+
+            <!-- PWA Mobile Bottom Navigation Bar (Visible on Mobile <= 768px) -->
+            <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 glass-bottom-bar border-t border-slate-200/80 dark:border-slate-800/80 pwa-safe-bottom">
+                <div class="grid grid-cols-5 items-center justify-around px-2 py-1.5">
+                    
+                    <!-- 1. Dashboard -->
+                    <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400' }}">
+                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        <span>Home</span>
+                    </a>
+
+                    <!-- 2. Sales Orders -->
+                    @can('sales-orders.view')
+                        <a href="{{ route('admin.sales-orders.index') }}" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition {{ request()->routeIs('admin.sales-orders.*') && !request()->routeIs('admin.sales-orders.bulk-upload*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400' }}">
+                            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                            <span>Orders</span>
+                        </a>
+                    @else
+                        <div></div>
+                    @endcan
+
+                    <!-- 3. Floating Center Action Button -->
+                    <div class="flex justify-center -mt-5">
+                        <button type="button" @click="quickActionSheetOpen = true" class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 hover:scale-105 active:scale-95 transition-transform" title="Quick Actions">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- 4. Bills -->
+                    @can('bills.view')
+                        <a href="{{ route('admin.bills.index') }}" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition {{ request()->routeIs('admin.bills.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400' }}">
+                            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <span>Bills</span>
+                        </a>
+                    @else
+                        <div></div>
+                    @endcan
+
+                    <!-- 5. Mobile Menu Drawer Trigger -->
+                    <button type="button" @click="sidebarOpen = true" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        <span>Menu</span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Mobile Quick Action Sheet Modal -->
+        <div x-show="quickActionSheetOpen" x-cloak class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div @click.away="quickActionSheetOpen = false" class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 dark:border-slate-800 max-w-sm w-full p-6 shadow-2xl space-y-4 pwa-safe-bottom">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base font-heading">Quick Actions</h3>
+                    <button type="button" @click="quickActionSheetOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm">✕</button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-2.5">
+                    @can('sales-orders.create')
+                        <a href="{{ route('admin.sales-orders.create') }}" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition">
+                            <span class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm">➕</span>
+                            <div>
+                                <div class="text-xs font-bold text-slate-900 dark:text-white">Create Sales Order</div>
+                                <div class="text-[10px] text-slate-400">Record client order and line items</div>
+                            </div>
+                        </a>
+                    @endcan
+
+                    @can('bills.create')
+                        <a href="{{ route('admin.bills.create') }}" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition">
+                            <span class="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-950 text-violet-600 dark:text-violet-400 flex items-center justify-center font-bold text-sm">📷</span>
+                            <div>
+                                <div class="text-xs font-bold text-slate-900 dark:text-white">Upload Vendor Bill</div>
+                                <div class="text-[10px] text-slate-400">Snap receipt or attach document</div>
+                            </div>
+                        </a>
+                    @endcan
+
+                    @can('upload-sos.create')
+                        <a href="{{ route('admin.upload-sos.create') }}" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition">
+                            <span class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm">🖼️</span>
+                            <div>
+                                <div class="text-xs font-bold text-slate-900 dark:text-white">Upload SO Image</div>
+                                <div class="text-[10px] text-slate-400">Capture sales order slip image</div>
+                            </div>
+                        </a>
+                    @endcan
+
+                    @can('sales-orders.create')
+                        <a href="{{ route('admin.sales-orders.bulk-upload') }}" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition">
+                            <span class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">📊</span>
+                            <div>
+                                <div class="text-xs font-bold text-slate-900 dark:text-white">Bulk CSV Upload</div>
+                                <div class="text-[10px] text-slate-400">Import spreadsheet in bulk</div>
+                            </div>
+                        </a>
+                    @endcan
+                </div>
+
+                <div class="pt-2">
+                    <button type="button" @click="quickActionSheetOpen = false" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Mobile PWA Install Toast (Bottom Floating) -->
+        <template x-if="pwaInstallPrompt">
+            <div class="md:hidden fixed bottom-18 inset-x-4 z-40 p-3.5 rounded-2xl bg-indigo-600 text-white shadow-2xl flex items-center justify-between animate-subtle border border-indigo-400/40">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center font-bold text-sm">
+                        ⚡
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold">Install Cosmic Bill App</div>
+                        <div class="text-[10px] text-indigo-100">Add to home screen for offline access</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button @click="installPwa()" class="px-3 py-1.5 rounded-xl bg-white text-indigo-700 text-xs font-bold shadow-xs">
+                        Install
+                    </button>
+                    <button @click="pwaInstallPrompt = null" class="text-indigo-200 hover:text-white text-xs p-1">
+                        ✕
+                    </button>
+                </div>
+            </div>
+        </template>
+
+        <!-- Floating Online / Reconnected Toast -->
+        <div x-show="showOnlineBanner" x-cloak class="fixed top-4 right-4 z-50 px-4 py-2 rounded-2xl bg-emerald-600 text-white text-xs font-bold shadow-xl flex items-center gap-2 transition">
+            <span>✓</span> Connection Restored
         </div>
 
         <!-- Change Password Modal -->
@@ -265,7 +412,6 @@
                     @csrf
                     @method('PUT')
 
-                    <!-- Current Password -->
                     <div>
                         <label for="modal_current_password" class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                             Current Password
@@ -281,7 +427,6 @@
                         </div>
                     </div>
 
-                    <!-- New Password -->
                     <div>
                         <label for="modal_new_password" class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                             New Password
@@ -297,7 +442,6 @@
                         </div>
                     </div>
 
-                    <!-- Confirm New Password -->
                     <div>
                         <label for="modal_confirm_password" class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                             Confirm New Password
