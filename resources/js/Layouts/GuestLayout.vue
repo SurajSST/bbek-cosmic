@@ -34,21 +34,21 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 bg-slate-950 text-slate-100 relative overflow-hidden font-sans select-none pwa-safe-top pwa-safe-bottom">
+    <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 bg-slate-50 dark:bg-[#070a12] text-slate-900 dark:text-slate-100 relative overflow-hidden font-sans select-none pwa-safe-top pwa-safe-bottom transition-colors duration-300">
         
         <!-- Glowing Ambient Lighting Mesh Background -->
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-indigo-600/20 via-violet-600/15 to-transparent rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gradient-to-tl from-purple-600/15 via-pink-600/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-indigo-500/10 dark:from-indigo-600/20 via-violet-500/10 dark:via-violet-600/15 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gradient-to-tl from-purple-500/10 dark:from-purple-600/15 via-pink-500/10 dark:via-pink-600/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
 
         <!-- Top Right Theme Toggle -->
         <div class="absolute top-4 right-4 z-20">
             <button 
                 type="button" 
                 @click="toggleTheme" 
-                class="p-2.5 rounded-2xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 text-slate-400 hover:text-slate-200 transition shadow-lg backdrop-blur-md"
+                class="p-2.5 rounded-2xl bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition shadow-lg backdrop-blur-md"
                 title="Toggle Theme Mode"
             >
-                <svg v-if="!isDarkActive" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg v-if="!isDarkActive" class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                 </svg>
                 <svg v-else class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,24 +65,24 @@ onMounted(() => {
                     C
                 </div>
                 <div>
-                    <h1 class="text-2xl font-black font-heading text-white tracking-tight">
+                    <h1 class="text-2xl font-black font-heading text-slate-900 dark:text-white tracking-tight">
                         Cosmic Bill
                     </h1>
-                    <p class="text-xs text-slate-400 font-medium mt-0.5">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                         Enterprise Invoicing, Sales Orders & Role Engine
                     </p>
                 </div>
             </div>
 
-            <!-- Content Card (Dark Glassmorphic Card Container) -->
-            <div class="relative bg-slate-900/85 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-950/80 border border-slate-800/90 overflow-hidden">
+            <!-- Content Card (Adaptive Light/Dark Container) -->
+            <div class="relative bg-white dark:bg-slate-900/85 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 shadow-xl dark:shadow-2xl shadow-slate-200/50 dark:shadow-slate-950/80 border border-slate-200/90 dark:border-slate-800/90 overflow-hidden transition-all duration-300">
                 <!-- Top Accent Line -->
                 <div class="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-75"></div>
                 <slot />
             </div>
 
             <!-- Footer Copyright -->
-            <div class="text-center text-[11px] text-slate-500 font-medium">
+            <div class="text-center text-[11px] text-slate-400 dark:text-slate-500 font-medium">
                 &copy; {{ new Date().getFullYear() }} Cosmic Bill Inc. All rights reserved.
             </div>
         </div>
