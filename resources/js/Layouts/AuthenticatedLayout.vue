@@ -462,11 +462,15 @@ onUnmounted(() => {
                 <!-- Page View Slot -->
                 <slot />
             </main>
+        </div>
 
-            <!-- PWA Mobile Bottom Navigation Bar (Mobile <= 768px) -->
+        <!-- PWA Mobile Bottom Navigation Bar (Mobile <= 768px) -->
+        <!-- Teleported to <body> so its `fixed` positioning anchors to the true device
+             viewport, not the nearest overflow-hidden ancestor (iOS standalone/PWA bug). -->
+        <Teleport to="body">
             <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 glass-bottom-bar border-t border-slate-200/80 dark:border-slate-800/80 pwa-safe-bottom">
                 <div class="grid grid-cols-5 items-center justify-around px-2 py-1.5">
-                    
+
                     <!-- 1. Dashboard -->
                     <Link href="/admin/dashboard" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/dashboard') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
                         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
@@ -501,7 +505,7 @@ onUnmounted(() => {
                     </button>
                 </div>
             </nav>
-        </div>
+        </Teleport>
 
         <!-- Quick Actions Bottom Sheet (Mobile & Quick Access) -->
         <Transition
