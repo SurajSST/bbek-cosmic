@@ -41,7 +41,10 @@ onMounted(() => {
         <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gradient-to-tl from-purple-500/10 dark:from-purple-600/15 via-pink-500/10 dark:via-pink-600/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
 
         <!-- Top Right Theme Toggle -->
-        <div class="absolute top-4 right-4 z-20">
+        <!-- Offset by the safe-area inset: `absolute` resolves against the padding box,
+             so the container's pwa-safe-top padding does not push this down on notched
+             devices and it would collide with the status bar. -->
+        <div class="absolute top-[calc(env(safe-area-inset-top,0px)+1rem)] right-[calc(env(safe-area-inset-right,0px)+1rem)] z-20">
             <button 
                 type="button" 
                 @click="toggleTheme" 
