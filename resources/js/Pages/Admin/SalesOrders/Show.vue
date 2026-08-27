@@ -12,6 +12,7 @@ const props = defineProps({
 
 const returnModalOpen = ref(false);
 const activeItem = ref(null);
+const activePreviewModal = ref(null);
 const returnForm = useForm({
     returned_quantity: 1,
     remarks: ''
@@ -200,15 +201,17 @@ function formatCurrency(amount) {
                     <div class="grid grid-cols-2 gap-3">
                         <div v-if="salesOrder.bill_image" class="space-y-1">
                             <span class="text-[10px] font-bold uppercase text-slate-400">Bill Image</span>
-                            <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                            <button type="button" @click="activePreviewModal = `/storage/${salesOrder.bill_image}`" class="block w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group relative cursor-zoom-in">
                                 <img :src="`/storage/${salesOrder.bill_image}`" class="w-full h-32 object-cover" />
-                            </div>
+                                <span class="absolute inset-0 bg-slate-950/0 group-hover:bg-slate-950/30 flex items-center justify-center text-white text-[11px] font-bold opacity-0 group-hover:opacity-100 transition">🔍 View Full Size</span>
+                            </button>
                         </div>
                         <div v-if="salesOrder.slip_image" class="space-y-1">
                             <span class="text-[10px] font-bold uppercase text-slate-400">Delivery Slip</span>
-                            <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                            <button type="button" @click="activePreviewModal = `/storage/${salesOrder.slip_image}`" class="block w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group relative cursor-zoom-in">
                                 <img :src="`/storage/${salesOrder.slip_image}`" class="w-full h-32 object-cover" />
-                            </div>
+                                <span class="absolute inset-0 bg-slate-950/0 group-hover:bg-slate-950/30 flex items-center justify-center text-white text-[11px] font-bold opacity-0 group-hover:opacity-100 transition">🔍 View Full Size</span>
+                            </button>
                         </div>
                     </div>
                     <p v-if="!salesOrder.bill_image && !salesOrder.slip_image" class="text-xs text-slate-400">
@@ -267,6 +270,16 @@ function formatCurrency(amount) {
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Image Lightbox Modal -->
+        <div v-if="activePreviewModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4" @click.self="activePreviewModal = null">
+            <div class="relative max-w-2xl max-h-[85vh] bg-slate-900 rounded-3xl overflow-hidden p-2 border border-slate-800 shadow-2xl">
+                <button @click="activePreviewModal = null" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-slate-950/70 text-white flex items-center justify-center hover:bg-slate-900 text-xs">
+                    ✕
+                </button>
+                <img :src="activePreviewModal" class="w-full h-auto max-h-[80vh] object-contain rounded-2xl" alt="Attachment Preview" />
             </div>
         </div>
 
