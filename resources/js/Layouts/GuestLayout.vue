@@ -34,7 +34,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 bg-slate-50 dark:bg-[#070a12] text-slate-900 dark:text-slate-100 relative overflow-hidden font-sans select-none pwa-safe-top pwa-safe-bottom transition-colors duration-300">
+    <div class="min-h-screen min-h-[100dvh] flex flex-col justify-center items-center p-4 sm:p-6 bg-slate-50 dark:bg-[#070a12] text-slate-900 dark:text-slate-100 relative overflow-hidden font-sans select-none pwa-safe-top pwa-safe-bottom transition-colors duration-300">
         
         <!-- Glowing Ambient Lighting Mesh Background -->
         <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-indigo-500/10 dark:from-indigo-600/20 via-violet-500/10 dark:via-violet-600/15 to-transparent rounded-full blur-3xl pointer-events-none"></div>

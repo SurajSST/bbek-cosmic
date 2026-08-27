@@ -149,10 +149,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <!-- `fixed inset-0` anchors the shell to all four viewport edges directly, so the
-         layout never depends on a measured/reported viewport height (100vh vs dvh vs
-         window.innerHeight all disagree in iOS standalone mode). -->
-    <div class="fixed inset-0 flex overflow-hidden bg-slate-50 dark:bg-[#070a12] text-slate-900 dark:text-slate-100 antialiased font-sans">
+    <div class="h-screen h-[100dvh] w-full flex overflow-hidden bg-slate-50 dark:bg-[#070a12] text-slate-900 dark:text-slate-100 antialiased font-sans">
         
         <!-- Prominent Glowing Top Loading Bar for SPA Transitions -->
         <div v-if="isPageLoading" class="fixed top-0 inset-x-0 h-1 z-[100] overflow-hidden pointer-events-none" :style="{ marginTop: 'env(safe-area-inset-top, 0px)' }">
@@ -445,7 +442,7 @@ onUnmounted(() => {
             </header>
 
             <!-- Scrollable Content Area (SPA Instant View Mount) -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-7 space-y-6 touch-scroll pb-24 md:pb-8">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-7 space-y-6 touch-scroll pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8">
                 
                 <!-- Flash Messages -->
                 <div v-if="flash.success" class="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-200 flex items-center justify-between shadow-xs">
@@ -468,47 +465,43 @@ onUnmounted(() => {
         </div>
 
         <!-- PWA Mobile Bottom Navigation Bar (Mobile <= 768px) -->
-        <!-- Teleported to <body> so its `fixed` positioning anchors to the true device
-             viewport, not the nearest overflow-hidden ancestor (iOS standalone/PWA bug). -->
-        <Teleport to="body">
-            <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 glass-bottom-bar border-t border-slate-200/80 dark:border-slate-800/80 pwa-safe-bottom">
-                <div class="grid grid-cols-5 items-center justify-around px-2 py-1.5">
+        <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 glass-bottom-bar border-t border-slate-200/80 dark:border-slate-800/80 pwa-safe-bottom">
+            <div class="grid grid-cols-5 items-center justify-around px-2 py-1.5">
 
-                    <!-- 1. Dashboard -->
-                    <Link href="/admin/dashboard" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/dashboard') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
-                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                        <span>Home</span>
-                    </Link>
+                <!-- 1. Dashboard -->
+                <Link href="/admin/dashboard" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/dashboard') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
+                    <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span>Home</span>
+                </Link>
 
-                    <!-- 2. Sales Orders -->
-                    <Link v-if="can('sales-orders.view')" href="/admin/sales-orders" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/sales-orders') && !isUrl('/admin/sales-orders/bulk-upload') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
-                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                        <span>Orders</span>
-                    </Link>
-                    <div v-else></div>
+                <!-- 2. Sales Orders -->
+                <Link v-if="can('sales-orders.view')" href="/admin/sales-orders" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/sales-orders') && !isUrl('/admin/sales-orders/bulk-upload') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
+                    <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span>Orders</span>
+                </Link>
+                <div v-else></div>
 
-                    <!-- 3. Floating Action Center Button -->
-                    <div class="flex justify-center -mt-5">
-                        <button type="button" @click="quickActionSheetOpen = true" class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 hover:scale-105 active:scale-95 transition-transform" title="Quick Actions">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"></path></svg>
-                        </button>
-                    </div>
-
-                    <!-- 4. Bills -->
-                    <Link v-if="can('bills.view')" href="/admin/bills" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/bills') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
-                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <span>Bills</span>
-                    </Link>
-                    <div v-else></div>
-
-                    <!-- 5. Mobile Drawer Trigger -->
-                    <button type="button" @click="sidebarOpen = !sidebarOpen" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition" :class="sidebarOpen ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''">
-                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                        <span>Menu</span>
+                <!-- 3. Floating Action Center Button -->
+                <div class="flex justify-center -mt-5">
+                    <button type="button" @click="quickActionSheetOpen = true" class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 hover:scale-105 active:scale-95 transition-transform" title="Quick Actions">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"></path></svg>
                     </button>
                 </div>
-            </nav>
-        </Teleport>
+
+                <!-- 4. Bills -->
+                <Link v-if="can('bills.view')" href="/admin/bills" @click="sidebarOpen = false" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold transition" :class="isUrl('/admin/bills') ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400'">
+                    <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>Bills</span>
+                </Link>
+                <div v-else></div>
+
+                <!-- 5. Mobile Drawer Trigger -->
+                <button type="button" @click="sidebarOpen = !sidebarOpen" class="flex flex-col items-center justify-center py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition" :class="sidebarOpen ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''">
+                    <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <span>Menu</span>
+                </button>
+            </div>
+        </nav>
 
         <!-- Quick Actions Bottom Sheet (Mobile & Quick Access) -->
         <Transition
@@ -519,7 +512,7 @@ onUnmounted(() => {
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
         >
-            <div v-if="quickActionSheetOpen" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex flex-col justify-end p-3 sm:p-4" @click.self="quickActionSheetOpen = false">
+            <div v-if="quickActionSheetOpen" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex flex-col justify-end p-3 sm:p-4 pb-[max(env(safe-area-inset-bottom,0px),1rem)]" @click.self="quickActionSheetOpen = false">
                 <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xl max-w-lg w-full mx-auto space-y-4">
                     <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                         <h3 class="font-bold text-sm font-heading text-slate-900 dark:text-white">Quick Actions</h3>
