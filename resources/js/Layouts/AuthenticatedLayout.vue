@@ -149,7 +149,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="h-dvh flex overflow-hidden bg-slate-50 dark:bg-[#070a12] text-slate-900 dark:text-slate-100 antialiased font-sans">
+    <div class="h-[var(--app-height)] flex overflow-hidden bg-slate-50 dark:bg-[#070a12] text-slate-900 dark:text-slate-100 antialiased font-sans">
         
         <!-- Prominent Glowing Top Loading Bar for SPA Transitions -->
         <div v-if="isPageLoading" class="fixed top-0 inset-x-0 h-1 z-[100] overflow-hidden pointer-events-none" :style="{ marginTop: 'env(safe-area-inset-top, 0px)' }">
@@ -336,7 +336,7 @@ onUnmounted(() => {
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 h-dvh overflow-hidden bg-slate-50 dark:bg-[#070a12]">
+        <div class="flex-1 flex flex-col min-w-0 h-[var(--app-height)] overflow-hidden bg-slate-50 dark:bg-[#070a12]">
             
             <!-- Sticky Top Header Navbar -->
             <header class="sticky top-0 z-30 glass-header border-b border-slate-200/70 dark:border-slate-800/80 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between shadow-2xs shrink-0 pwa-safe-top">
